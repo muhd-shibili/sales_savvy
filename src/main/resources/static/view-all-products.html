@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>View All Products</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07160f;
+    --surface: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+    --text: #f4f7ea;
+    --muted: #a3b8a9;
+    --border: rgba(236,248,137,0.14);
+    --accent: #ecf889;
+    --accent-contrast: #0a2013;
+    --radius: 16px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --shadow: 0 1px 0 rgba(236,248,137,0.05) inset, 0 16px 34px -18px rgba(0,0,0,0.6);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100%; }
+  body {
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(236,248,137,0.06), transparent 60%),
+      radial-gradient(ellipse 800px 600px at 100% 100%, rgba(16,91,47,0.35), transparent 60%),
+      linear-gradient(160deg, #0f2c1c 0%, var(--bg) 55%, #051007 100%);
+    color: var(--text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  .stage { width: 100%; max-width: 960px; animation: fadeUp 0.7s var(--ease) both; padding-top: 24px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600;
+    color: var(--muted); text-decoration: none; cursor: pointer; border: 1px solid transparent;
+    background: none; padding: 6px 10px; margin-bottom: 18px; border-radius: 999px;
+    transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .back:hover { background: rgba(236,248,137,0.06); color: var(--accent); border-color: var(--border); }
+  .back svg { width: 14px; height: 14px; }
+  h1 { font-family: "Fraunces", serif; font-style: italic; font-weight: 600; font-size: 30px; letter-spacing: -0.01em; margin: 0 0 6px; text-align: center; }
+  p.sub { margin: 0 0 32px; text-align: center; color: var(--muted); font-size: 14px; }
+
+  .msg {
+    display: none; font-size: 13px; font-weight: 600; padding: 12px 16px;
+    border-radius: var(--radius); margin-bottom: 20px;
+  }
+  .msg.show { display: block; }
+  .msg.error { background: rgba(248,113,113,0.12); color: #fca5a5; border: 1px solid rgba(248,113,113,0.28); }
+  .msg.info { background: rgba(96,165,250,0.12); color: #93c5fd; border: 1px solid rgba(96,165,250,0.28); }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .product-card {
+    background: var(--surface);
+    backdrop-filter: blur(18px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s var(--ease), border-color 0.3s var(--ease);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .product-card:hover { transform: translateY(-4px); border-color: rgba(236,248,137,0.25); }
+  .product-card img {
+    width: 100%; height: 160px; object-fit: contain; border-radius: 12px;
+    background: rgba(236,248,137,0.06); border: 1px solid var(--border);
+  }
+  .product-card h3 { font-family: "Fraunces", serif; font-size: 16px; margin: 0; }
+  .product-card .meta { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; }
+  .product-card .actions { display: flex; gap: 8px; margin-top: 4px; }
+  .product-card .actions a, .product-card .actions button {
+    font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 999px;
+    text-decoration: none; cursor: pointer; border: 1px solid var(--border);
+    background: transparent; color: var(--text); transition: all 0.2s var(--ease);
+  }
+  .product-card .actions a:hover, .product-card .actions button:hover {
+    background: rgba(236,248,137,0.08); border-color: var(--accent); color: var(--accent);
+  }
+  .empty { text-align: center; color: var(--muted); padding: 60px 20px; font-size: 14px; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 560px) { h1 { font-size: 22px; } }
+</style>
+</head>
+<body>
+  <main class="stage">
+    <a class="back" href="product-management.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Back
+    </a>
+
+    <h1>View All Products</h1>
+    <p class="sub">Your entire product catalog.</p>
+
+    <div class="msg" id="msg"></div>
+    <div class="product-grid" id="productGrid"></div>
+  </main>
+
+  <script>
+    // ─── Self-contained auth helpers ───
+    function getToken() { return localStorage.getItem('token'); }
+    function getRole() { return localStorage.getItem('role'); }
+    function isAuthenticated() {
+      const t = getToken();
+      if (!t) return false;
+      try { const p = JSON.parse(atob(t.split('.')[1])); return Date.now() < p.exp * 1000; } catch(e) { return false; }
+    }
+
+    // Auth guard
+    if (!isAuthenticated()) {
+      window.location.replace('/login.html');
+    } else if (getRole() !== 'ADMIN') {
+      window.location.replace('/customer-home.html');
+    }
+
+    const msgBox = document.getElementById('msg');
+    const grid = document.getElementById('productGrid');
+
+    async function loadProducts() {
+      const token = getToken();
+      if (!token) {
+        msgBox.textContent = 'Not authenticated. Redirecting...';
+        msgBox.className = 'msg show error';
+        setTimeout(() => window.location.replace('/login.html'), 1000);
+        return;
+      }
+
+      try {
+        const response = await fetch('/admin/viewAllProduct', {
+          headers: {
+            'Authorization': 'Bearer ' + token
+          }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          msgBox.textContent = 'Access denied. Please log in as admin.';
+          msgBox.className = 'msg show error';
+          localStorage.clear();
+          setTimeout(() => window.location.replace('/login.html'), 1500);
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error('Server returned ' + response.status);
+        }
+
+        const products = await response.json();
+
+        if (!products || products.length === 0) {
+          grid.innerHTML = '<div class="empty">No products found. Add your first product!</div>';
+          return;
+        }
+
+        grid.innerHTML = products.map(p => `
+          <div class="product-card">
+            <img src="${p.imageUrl || 'https://via.placeholder.com/300x160?text=No+Image'}" alt="${p.name}" />
+            <h3>${p.name}</h3>
+            <div class="meta">
+              <span>$${p.price}</span>
+              <span>${p.stock} in stock</span>
+            </div>
+            <div class="actions">
+              <a href="/search-product.html?id=${p.id}">View</a>
+              <a href="/update-product.html?id=${p.id}">Edit</a>
+              <button onclick="delete-product(${p.id})">Delete</button>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (err) {
+        msgBox.textContent = 'Unable to load products right now.';
+        msgBox.className = 'msg show error';
+        console.error(err);
+      }
+    }
+
+/*     async function deleteProduct(id) {
+      if (!confirm('Are you sure you want to delete this product?')) return;
+      try {
+        const response = await fetch(`/admin/deleteProduct/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + getToken() }
+        });
+        if (response.ok) {
+          loadProducts();
+        } else {
+          alert('Failed to delete product.');
+        }
+      } catch (err) {
+        alert('Server error while deleting.');
+      }
+    } */
+
+    loadProducts();
+  </script>
+</body>
+</html>

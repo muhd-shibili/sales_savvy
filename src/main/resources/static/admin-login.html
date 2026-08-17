@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesSavvy — Admin Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #F9FBE7;
+            --white: #FFFFFF;
+            --green-dark: #1B4D3E;
+            --green-primary: #2D5016;
+            --green-accent: #7CB342;
+            --green-light: #E8F5A0;
+            --orange-soft: #F57F17;
+            --red: #C62828;
+            --purple: #6A1B9A;
+            --yellow: #F9D71C;
+            --text-dark: #1A1A1A;
+            --text-muted: #5C5C5C;
+            --border: #E0E0E0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Static background shapes — no animation, no JS */
+        .bg-shapes {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.10;
+        }
+
+        .shape-1 { top: -8%; left: -6%; width: 380px; height: 380px; color: var(--green-accent); }
+        .shape-2 { top: 12%; right: -4%; width: 280px; height: 280px; color: var(--orange-soft); }
+        .shape-3 { bottom: -10%; left: 18%; width: 320px; height: 320px; color: var(--purple); }
+        .shape-4 { bottom: 18%; right: 8%; width: 220px; height: 220px; color: var(--red); }
+        .shape-5 { top: 42%; left: 6%; width: 160px; height: 160px; color: var(--yellow); }
+
+        /* Static botanical accents — no animation */
+        .botanical {
+            position: absolute;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.35;
+        }
+
+        .botanical-1 { top: 10%; right: 10%; color: var(--orange-soft); }
+        .botanical-2 { bottom: 14%; left: 8%; color: var(--green-accent); }
+        .botanical-3 { top: 52%; right: 5%; color: var(--purple); }
+
+        /* Main layout */
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1100px;
+            padding: 20px;
+            display: flex;
+            gap: 0;
+            align-items: stretch;
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Left panel */
+        .brand-panel {
+            flex: 1;
+            background: var(--green-dark);
+            border-radius: 24px 0 0 24px;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+            min-height: 580px;
+            box-shadow: 0 25px 80px rgba(27, 77, 62, 0.25);
+        }
+
+        .brand-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -50%;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(124, 179, 66, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .brand-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -30%; left: -30%;
+            width: 80%; height: 80%;
+            background: radial-gradient(circle, rgba(245, 127, 23, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .brand-header { position: relative; z-index: 2; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 44px; height: 44px;
+            background: var(--green-light);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--green-dark);
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px; font-weight: 700; letter-spacing: -0.5px;
+        }
+
+        .logo-text span { font-weight: 600; opacity: 0.9; }
+
+        .brand-tagline {
+            font-size: 15px; opacity: 0.85; line-height: 1.6; max-width: 320px;
+        }
+
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .brand-features {
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .feature-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .feature-item:hover {
+            background: rgba(255,255,255,0.14);
+            transform: translateX(8px);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .feature-icon {
+            width: 38px; height: 38px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-icon.orange { background: var(--orange-soft); }
+        .feature-icon.purple { background: var(--purple); }
+        .feature-icon.red { background: var(--red); }
+        .feature-icon.green { background: var(--green-accent); }
+
+        .feature-text { font-size: 14px; font-weight: 500; }
+        .feature-text small { display: block; font-size: 12px; opacity: 0.7; font-weight: 400; margin-top: 2px; }
+
+        /* Right panel */
+        .form-panel {
+            flex: 1;
+            background: var(--white);
+            border-radius: 0 24px 24px 0;
+            padding: 60px 50px;
+            display: flex; flex-direction: column; justify-content: center;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.08);
+            position: relative; min-height: 580px;
+        }
+
+        .back-link {
+            position: absolute; top: 24px; left: 30px;
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 13px; font-weight: 600; color: var(--text-muted);
+            text-decoration: none; transition: color 0.2s;
+        }
+
+        .back-link:hover { color: var(--green-primary); }
+
+        .form-header { margin-bottom: 36px; }
+        .form-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px; color: var(--text-dark);
+            margin-bottom: 8px; letter-spacing: -0.5px;
+        }
+        .form-header p { color: var(--text-muted); font-size: 15px; }
+
+        .form-group { margin-bottom: 22px; position: relative; }
+        .form-label {
+            display: block; font-size: 13px; font-weight: 600;
+            color: var(--text-dark); margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .input-wrapper { position: relative; }
+
+        .form-input {
+            width: 100%; padding: 16px 18px 16px 48px;
+            border: 2px solid var(--border); border-radius: 14px;
+            font-size: 15px; font-family: 'DM Sans', sans-serif;
+            color: var(--text-dark); background: var(--white);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            outline: none;
+        }
+        .form-input::placeholder { color: #AAA; }
+        .form-input:hover { border-color: var(--green-accent); background: #FAFFF5; }
+        .form-input:focus {
+            border-color: var(--green-primary);
+            box-shadow: 0 0 0 4px rgba(124,179,66,0.15);
+        }
+
+        .input-icon {
+            position: absolute; left: 16px; top: 50%;
+            transform: translateY(-50%); color: #AAA;
+            transition: all 0.3s ease; pointer-events: none;
+        }
+        .form-input:focus ~ .input-icon,
+        .form-input:not(:placeholder-shown) ~ .input-icon { color: var(--green-primary); }
+
+        .password-toggle {
+            position: absolute; right: 16px; top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none; cursor: pointer;
+            color: #AAA; padding: 4px; transition: color 0.2s;
+        }
+        .password-toggle:hover { color: var(--green-primary); }
+
+        .form-options {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 28px; font-size: 13px;
+        }
+        .remember-me {
+            display: flex; align-items: center; gap: 8px;
+            cursor: pointer; color: var(--text-muted); transition: color 0.2s;
+        }
+        .remember-me:hover { color: var(--text-dark); }
+        .remember-me input { width: 18px; height: 18px; accent-color: var(--green-primary); cursor: pointer; }
+
+        .forgot-link {
+            color: var(--green-primary); text-decoration: none; font-weight: 600;
+            position: relative; transition: color 0.2s;
+        }
+        .forgot-link::after {
+            content: ''; position: absolute; bottom: -2px; left: 0;
+            width: 0; height: 2px; background: var(--green-primary);
+            transition: width 0.3s ease;
+        }
+        .forgot-link:hover::after { width: 100%; }
+
+        .btn-login {
+            width: 100%; padding: 16px;
+            background: var(--green-primary); color: var(--white);
+            border: none; border-radius: 14px;
+            font-size: 16px; font-weight: 700; font-family: 'DM Sans', sans-serif;
+            cursor: pointer; position: relative; overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 4px 20px rgba(45,80,22,0.25);
+        }
+        .btn-login::before {
+            content: ''; position: absolute; top: 50%; left: 50%;
+            width: 0; height: 0; border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transform: translate(-50%,-50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(45,80,22,0.35);
+            background: var(--green-dark);
+        }
+        .btn-login:hover::before { width: 400px; height: 400px; }
+        .btn-login:active { transform: translateY(0); }
+        .btn-login span { position: relative; z-index: 1; }
+        .btn-login:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .form-message {
+            text-align: center; font-size: 14px; font-weight: 600;
+            margin-bottom: 16px; min-height: 20px;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .form-message.visible { opacity: 1; }
+
+        /* Decorative dots */
+        .dots-pattern {
+            position: absolute; width: 120px; height: 120px;
+            opacity: 0.08; pointer-events: none;
+        }
+        .dots-pattern.top-right { top: 30px; right: 30px; }
+
+        /* Animations */
+        @keyframes shake {
+            0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}
+        }
+        .shake { animation: shake 0.4s ease-in-out; }
+
+        @keyframes successPulse {
+            0%{box-shadow:0 0 0 0 rgba(124,179,66,0.4)} 70%{box-shadow:0 0 0 20px rgba(124,179,66,0)} 100%{box-shadow:0 0 0 0 rgba(124,179,66,0)}
+        }
+        .success-pulse { animation: successPulse 0.8s ease-out; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .login-wrapper { flex-direction: column; max-width: 480px; }
+            .brand-panel { border-radius: 24px 24px 0 0; min-height: auto; padding: 40px 30px; }
+            .form-panel { border-radius: 0 0 24px 24px; min-height: auto; padding: 40px 30px; }
+            .brand-features { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background SVG Shapes — completely static -->
+    <div class="bg-shapes">
+        <svg class="shape shape-1" viewBox="0 0 200 200" fill="currentColor"><path d="M100,10 C120,40 160,50 180,80 C200,110 190,150 160,170 C130,190 90,180 60,160 C30,140 20,100 40,70 C60,40 80,20 100,10 Z"/></svg>
+        <svg class="shape shape-2" viewBox="0 0 200 200" fill="currentColor"><circle cx="100" cy="100" r="80"/></svg>
+        <svg class="shape shape-3" viewBox="0 0 200 200" fill="currentColor"><path d="M100,20 L180,180 L20,180 Z"/></svg>
+        <svg class="shape shape-4" viewBox="0 0 200 200" fill="currentColor"><rect x="40" y="40" width="120" height="120" rx="30"/></svg>
+        <svg class="shape shape-5" viewBox="0 0 200 200" fill="currentColor"><path d="M100,30 Q130,60 160,100 Q130,140 100,170 Q70,140 40,100 Q70,60 100,30 Z"/></svg>
+    </div>
+
+    <!-- Botanical Accents — completely static -->
+    <svg class="botanical botanical-1" width="70" height="70" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M40,70 Q40,40 20,20" stroke-linecap="round"/>
+        <path d="M40,70 Q40,40 60,20" stroke-linecap="round"/>
+        <circle cx="20" cy="20" r="5" fill="currentColor" stroke="none"/>
+        <circle cx="60" cy="20" r="5" fill="currentColor" stroke="none"/>
+    </svg>
+    <svg class="botanical botanical-2" width="90" height="90" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M50,90 Q50,50 30,30" stroke-linecap="round"/>
+        <path d="M50,90 Q50,50 70,30" stroke-linecap="round"/>
+        <ellipse cx="30" cy="30" rx="8" ry="5" transform="rotate(-30 30 30)" fill="currentColor" stroke="none"/>
+        <ellipse cx="70" cy="30" rx="8" ry="5" transform="rotate(30 70 30)" fill="currentColor" stroke="none"/>
+    </svg>
+    <svg class="botanical botanical-3" width="50" height="50" viewBox="0 0 60 60" fill="currentColor">
+        <path d="M30,5 L35,20 L50,20 L38,30 L43,45 L30,35 L17,45 L22,30 L10,20 L25,20 Z" opacity="0.5"/>
+    </svg>
+
+    <div class="login-wrapper">
+        <!-- Brand Panel -->
+        <div class="brand-panel">
+            <div class="brand-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12,2 C7,2 4,6 4,10 C4,16 12,22 12,22 C12,22 20,16 20,10 C20,6 17,2 12,2 Z"/>
+                            <path d="M12,6 L12,14" stroke-linecap="round"/>
+                            <circle cx="12" cy="10" r="2" fill="currentColor" stroke="none"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">Sales<span>Savvy</span></div>
+                </div>
+                <p class="brand-tagline">Admin Portal for SalesSavvy. Manage inventory, oversee operations, and drive growth from one powerful dashboard.</p>
+                <div class="admin-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12,2 L15,9 L22,9 L16,14 L18,21 L12,17 L6,21 L8,14 L2,9 L9,9 Z"/></svg>
+                    Administrator Access
+                </div>
+            </div>
+
+            <div class="brand-features">
+                <div class="feature-item">
+                    <div class="feature-icon orange">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    </div>
+                    <div class="feature-text">Dashboard Overview<small>Real-time sales, orders & analytics</small></div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon purple">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M17,21v-2a4,4 0 0,0-4-4H5a4,4 0 0,0-4,4v2"/><circle cx="9" cy="7" r="4"/><path d="M23,21v-2a4,4 0 0,0-3-3.87"/><path d="M16,3.13a4,4 0 0,1 0,7.75"/></svg>
+                    </div>
+                    <div class="feature-text">User Management<small>View and manage customer accounts</small></div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon green">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M12,22s8-4,8-10V5l-8-3-8,3v7C4,18,12,22,12,22z"/></svg>
+                    </div>
+                    <div class="feature-text">Secure Admin Panel<small>256-bit SSL & role-based access</small></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Panel -->
+        <div class="form-panel">
+            <a href="/" class="back-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15,18 9,12 15,6"/></svg>
+                Back to Home
+            </a>
+
+            <svg class="dots-pattern top-right" viewBox="0 0 100 100">
+                <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="2" fill="#1B4D3E"/></pattern>
+                <rect width="100" height="100" fill="url(#dots)"/>
+            </svg>
+
+            <div class="form-header">
+                <h1>Admin Login</h1>
+                <p>Enter your administrator credentials to continue</p>
+            </div>
+
+            <div id="message" class="form-message"></div>
+
+            <form id="adminLoginForm" autocomplete="off">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" class="form-input" id="username" placeholder="Enter admin username" required>
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20,21V19a4,4 0 0,0-4-4H8a4,4 0 0,0-4,4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" class="form-input" id="password" placeholder="Enter admin password" required>
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7,11V7a5,5 0 0,1 10,0v4"/></svg>
+                        <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+                            <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1,12S5,4 12,4s11,8 11,8-4,8-11,8S1,12 1,12z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span>Sign In as Admin</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    
+</body>
+</html>

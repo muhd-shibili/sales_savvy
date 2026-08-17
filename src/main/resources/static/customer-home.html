@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales-Savvy — Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+    :root {
+        --cream: #F9FBE7;
+        --white: #FFFFFF;
+        --green-dark: #1B4D3E;
+        --green-primary: #2D5016;
+        --green-accent: #7CB342;
+        --green-light: #E8F5A0;
+        --orange: #E65100;
+        --orange-soft: #F57F17;
+        --red: #C62828;
+        --purple: #6A1B9A;
+        --yellow: #F9D71C;
+        --text-dark: #1A1A1A;
+        --text-muted: #5C5C5C;
+        --border: #E0E0E0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background-color: var(--cream);
+        color: var(--text-dark);
+        min-height: 100vh;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--green-dark);
+        color: var(--white);
+        padding: 10px 0;
+        font-size: 13px;
+        text-align: center;
+        letter-spacing: 0.3px;
+    }
+    .topbar span { color: var(--green-light); font-weight: 600; }
+
+    header {
+        position: sticky;
+        top: 34px;
+        z-index: 99;
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+    }
+
+    .header-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 16px 32px;
+        display: flex;
+        align-items: center;
+        gap: 28px;
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .logo-icon {
+        width: 40px; height: 40px; background: var(--green-light);
+        border-radius: 12px; display: flex; align-items: center; justify-content: center;
+        color: var(--green-dark);
+    }
+    .logo-text {
+        font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700;
+        color: var(--green-dark); letter-spacing: -0.5px;
+    }
+    .logo-text span { font-weight: 600; opacity: 0.75; }
+
+    .search-bar { flex: 1; position: relative; max-width: 520px; }
+    .search-bar input {
+        width: 100%; padding: 12px 18px 12px 44px;
+        border: 2px solid var(--border); border-radius: 30px;
+        font-family: 'DM Sans', sans-serif; font-size: 14px;
+        outline: none; transition: all 0.25s ease; background: var(--cream);
+    }
+    .search-bar input:focus {
+        border-color: var(--green-accent); background: var(--white);
+        box-shadow: 0 0 0 4px rgba(124,179,66,0.15);
+    }
+    .search-bar svg {
+        position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+        color: #AAA; pointer-events: none;
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 18px; margin-left: auto; }
+    .icon-btn {
+        position: relative; width: 42px; height: 42px; border-radius: 50%;
+        border: 2px solid var(--border); background: var(--white);
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; color: var(--text-dark); transition: all 0.25s ease;
+    }
+    .icon-btn:hover { border-color: var(--green-accent); background: var(--green-light); transform: translateY(-2px); }
+    .cart-count {
+        position: absolute; top: -6px; right: -6px; background: var(--orange);
+        color: var(--white); font-size: 11px; font-weight: 700;
+        width: 19px; height: 19px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        border: 2px solid var(--white);
+    }
+
+    .profile-btn {
+        display: flex; align-items: center; gap: 10px;
+        padding: 6px 14px 6px 6px; border-radius: 30px;
+        border: 2px solid var(--border); background: var(--white);
+        cursor: pointer; transition: all 0.25s ease;
+    }
+    .profile-btn:hover { border-color: var(--green-accent); background: var(--green-light); transform: translateY(-2px); }
+    .profile-avatar {
+        width: 32px; height: 32px; border-radius: 50%; background: var(--purple);
+        color: var(--white); display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 13px; font-family: 'DM Sans', sans-serif; flex-shrink: 0;
+        text-transform: uppercase;
+    }
+    .profile-btn-text { font-size: 13px; font-weight: 600; color: var(--text-dark); line-height: 1.2; }
+    .profile-btn-text small { display: block; font-weight: 400; color: var(--text-muted); font-size: 11px; }
+
+    .category-nav {
+        max-width: 1280px; margin: 0 auto; padding: 14px 32px 0;
+        display: flex; gap: 10px; overflow-x: auto;
+    }
+    .chip {
+        flex-shrink: 0; padding: 9px 20px; border-radius: 30px;
+        border: 2px solid var(--border); background: var(--white);
+        font-size: 13px; font-weight: 600; color: var(--text-muted);
+        cursor: pointer; transition: all 0.25s ease; white-space: nowrap;
+    }
+    .chip:hover { border-color: var(--green-accent); color: var(--text-dark); }
+    .chip.active { background: var(--green-primary); border-color: var(--green-primary); color: var(--white); }
+
+    .hero { max-width: 1280px; margin: 28px auto 8px; padding: 0 32px; }
+    .hero-banner {
+        background: var(--green-dark); border-radius: 24px; padding: 44px 50px;
+        color: var(--white); display: flex; align-items: center;
+        justify-content: space-between; gap: 30px; position: relative; overflow: hidden;
+    }
+    .hero-banner::before {
+        content: ''; position: absolute; top: -50%; right: -10%;
+        width: 60%; height: 200%;
+        background: radial-gradient(circle, rgba(124,179,66,0.25) 0%, transparent 70%);
+    }
+    .hero-text { position: relative; z-index: 2; max-width: 520px; }
+    .hero-text h1 { font-family: 'Playfair Display', serif; font-size: 34px; margin-bottom: 10px; letter-spacing: -0.5px; }
+    .hero-text p { font-size: 15px; opacity: 0.85; line-height: 1.6; }
+    .hero-badge {
+        position: relative; z-index: 2; background: var(--orange-soft);
+        padding: 16px 22px; border-radius: 16px; text-align: center; flex-shrink: 0;
+    }
+    .hero-badge strong { display: block; font-size: 26px; font-family: 'Playfair Display', serif; }
+    .hero-badge span { font-size: 12px; opacity: 0.9; }
+
+    .section-title {
+        max-width: 1280px; margin: 40px auto 18px; padding: 0 32px;
+        display: flex; align-items: baseline; justify-content: space-between;
+    }
+    .section-title h2 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--text-dark); }
+    .section-title p { font-size: 13px; color: var(--text-muted); }
+
+    .product-grid {
+        max-width: 1280px; margin: 0 auto; padding: 0 32px 60px;
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 22px;
+    }
+
+    .product-card {
+        background: var(--white); border-radius: 18px; border: 1px solid var(--border);
+        overflow: hidden; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        display: flex; flex-direction: column; cursor: pointer;
+    }
+    .product-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(27,77,62,0.12);
+        border-color: var(--green-accent);
+    }
+    .product-media {
+        height: 180px; display: flex; align-items: center; justify-content: center;
+        color: var(--white); position: relative; overflow: hidden;
+        background-color: var(--white);
+    }
+    .product-media img {
+        width: 100%; height: 100%; object-fit: contain; display: block;
+    }
+    .product-media .placeholder-icon {
+        display: flex; align-items: center; justify-content: center;
+    }
+    .product-tag {
+        position: absolute; top: 10px; left: 10px;
+        background: rgba(255,255,255,0.9); color: var(--text-dark);
+        font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 30px;
+        z-index: 2;
+    }
+    .product-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .product-cat { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--green-accent); }
+    .product-name { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--text-dark); }
+    .product-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.4; flex: 1; }
+    .product-rating { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--orange-soft); font-weight: 600; }
+    .product-rating span { color: var(--text-muted); font-weight: 400; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+    .product-price { font-size: 19px; font-weight: 700; color: var(--green-primary); font-family: 'DM Sans', sans-serif; }
+    .product-price small { font-size: 12px; color: #BBB; text-decoration: line-through; font-weight: 400; margin-left: 6px; }
+    .product-actions { display: flex; gap: 8px; padding: 0 18px 18px; }
+
+    .btn {
+        border: none; border-radius: 12px; font-family: 'DM Sans', sans-serif;
+        font-weight: 700; font-size: 12.5px; cursor: pointer; padding: 10px 12px;
+        transition: all 0.25s ease; flex: 1;
+    }
+    .btn-outline { background: var(--white); color: var(--green-primary); border: 2px solid var(--green-primary); }
+    .btn-outline:hover { background: var(--green-light); }
+    .btn-solid { background: var(--green-primary); color: var(--white); }
+    .btn-solid:hover { background: var(--green-dark); transform: translateY(-1px); }
+
+    .overlay {
+        position: fixed; inset: 0; background: rgba(20,30,20,0.55);
+        backdrop-filter: blur(3px); display: none; align-items: center;
+        justify-content: center; z-index: 200; padding: 20px;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+        background: var(--white); border-radius: 22px; max-width: 720px;
+        width: 100%; display: flex; overflow: hidden; max-height: 88vh;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.3); position: relative;
+    }
+    .modal-media { width: 42%; color: var(--white); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; position: relative; background: var(--white); }
+    .modal-media img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .modal-media .placeholder-icon { display: flex; align-items: center; justify-content: center; }
+    .modal-body { padding: 34px 32px; overflow-y: auto; flex: 1; }
+    .modal-close {
+        position: absolute; top: 18px; right: 18px; width: 34px; height: 34px;
+        border-radius: 50%; border: none; background: rgba(0,0,0,0.06);
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        color: var(--text-dark); z-index: 10;
+    }
+    .modal-close:hover { background: rgba(0,0,0,0.12); }
+    .modal-cat { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--green-accent); margin-bottom: 6px; }
+    .modal-body h2 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 8px; }
+    .modal-body .product-rating { margin-bottom: 14px; font-size: 13px; }
+    .modal-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+    .modal-price-row { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
+    .modal-price { font-size: 28px; font-weight: 700; color: var(--green-primary); }
+    .qty-control { display: flex; align-items: center; border: 2px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .qty-control button { width: 36px; height: 36px; border: none; background: var(--cream); cursor: pointer; font-size: 16px; font-weight: 700; color: var(--text-dark); }
+    .qty-control span { width: 36px; text-align: center; font-weight: 700; }
+    .modal-actions { display: flex; gap: 12px; }
+    .modal-actions .btn { padding: 14px; font-size: 14px; }
+
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(20,30,20,0.45); display: none; z-index: 200; }
+    .drawer-overlay.open { display: block; }
+    .cart-drawer {
+        position: fixed; top: 0; right: -420px; width: 400px; max-width: 90vw;
+        height: 100%; background: var(--white); z-index: 201;
+        display: flex; flex-direction: column;
+        transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+        box-shadow: -10px 0 40px rgba(0,0,0,0.15);
+    }
+    .cart-drawer.open { right: 0; }
+    .cart-header { padding: 24px 26px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .cart-header h3 { font-family: 'Playfair Display', serif; font-size: 21px; }
+    .cart-header .modal-close { position: static; }
+    .cart-items { flex: 1; overflow-y: auto; padding: 10px 26px; }
+    .cart-item { display: flex; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: center; }
+    .cart-item-media { width: 54px; height: 54px; border-radius: 12px; flex-shrink: 0; color: var(--white); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+    .cart-item-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .cart-item-media .placeholder-icon { display: flex; align-items: center; justify-content: center; }
+    .cart-item-info { flex: 1; }
+    .cart-item-info h4 { font-size: 14px; margin-bottom: 2px; }
+    .cart-item-info span { font-size: 12px; color: var(--text-muted); }
+    .cart-item-price { font-weight: 700; color: var(--green-primary); font-size: 14px; }
+    .cart-remove { background: none; border: none; color: #BBB; cursor: pointer; font-size: 12px; margin-top: 4px; }
+    .cart-remove:hover { color: var(--red); }
+    .cart-item-delete {
+        width: 32px; height: 32px; border-radius: 8px; border: none; background: transparent;
+        display: flex; align-items: center; justify-content: center; cursor: pointer;
+        color: #BBB; transition: all 0.2s ease; flex-shrink: 0;
+    }
+    .cart-item-delete:hover { background: rgba(198,40,40,0.08); color: var(--red); }
+    .cart-qty-control { display: flex; align-items: center; border: 2px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 6px; width: fit-content; }
+    .cart-qty-control button { width: 28px; height: 28px; border: none; background: var(--cream); cursor: pointer; font-size: 14px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .cart-qty-control button:hover { background: var(--green-light); }
+    .cart-qty-control span { width: 32px; text-align: center; font-weight: 700; font-size: 13px; }
+    .cart-empty { text-align: center; padding: 60px 20px; color: var(--text-muted); font-size: 14px; }
+    .cart-footer { padding: 22px 26px 26px; border-top: 1px solid var(--border); }
+    .cart-total-row { display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 15px; font-weight: 700; }
+
+    .toast {
+        position: fixed; bottom: 28px; left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--green-dark); color: var(--white);
+        padding: 14px 24px; border-radius: 30px;
+        font-size: 13px; font-weight: 600; opacity: 0;
+        pointer-events: none; transition: all 0.3s ease; z-index: 300;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Profile Drawer */
+    .profile-drawer {
+        position: fixed; top: 0; right: -420px; width: 400px; max-width: 90vw;
+        height: 100%; background: var(--white); z-index: 201;
+        display: flex; flex-direction: column;
+        transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+        box-shadow: -10px 0 40px rgba(0,0,0,0.15);
+        border-left: 4px solid var(--green-accent);
+    }
+    .profile-drawer.open { right: 0; }
+    .profile-header { padding: 24px 26px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .profile-header h3 { font-family: 'Playfair Display', serif; font-size: 21px; }
+    .profile-header .modal-close { position: static; }
+    .profile-body { flex: 1; overflow-y: auto; padding: 20px 26px; }
+    .profile-card-large { display: flex; align-items: center; gap: 16px; padding: 20px; background: var(--cream); border-radius: 16px; margin-bottom: 24px; }
+    .profile-avatar-large { width: 56px; height: 56px; border-radius: 50%; background: var(--purple); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; flex-shrink: 0; }
+    .profile-info-large div:first-child { font-weight: 700; font-size: 16px; color: var(--text-dark); }
+    .profile-info-large div:last-child { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+    .profile-section { margin-bottom: 12px; }
+    .profile-option { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--border); background: var(--white); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-dark); transition: all 0.25s ease; }
+    .profile-option:hover { background: var(--green-light); border-color: var(--green-accent); transform: translateY(-1px); }
+    .profile-option-danger { color: var(--red); border-color: var(--border); }
+    .profile-option-danger:hover { background: #ffebee; border-color: var(--red); }
+    .profile-option svg { flex-shrink: 0; }
+    .edit-profile-form { padding: 16px; background: var(--cream); border-radius: 12px; margin-top: 10px; display: none; }
+    .edit-profile-form.open { display: block; }
+    .edit-profile-form label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .edit-profile-form input { width: 100%; padding: 10px 14px; border: 2px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; margin-bottom: 12px; outline: none; transition: all 0.2s; background: var(--white); }
+    .edit-profile-form input:focus { border-color: var(--green-accent); box-shadow: 0 0 0 3px rgba(124,179,66,0.12); }
+    .clear-cart-btn { background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+    .clear-cart-btn:hover { color: var(--red); background: rgba(198,40,40,0.06); }
+
+    footer { background: var(--green-dark); color: rgba(255,255,255,0.75); text-align: center; padding: 28px; font-size: 13px; margin-top: 20px; }
+    footer strong { color: var(--white); }
+
+    @media (max-width: 768px) {
+        .search-bar { display: none; }
+        .header-inner { padding: 14px 18px; }
+        .category-nav { padding: 14px 18px 0; }
+        .hero { padding: 0 18px; }
+        .hero-banner { flex-direction: column; text-align: center; }
+        .section-title { padding: 0 18px; }
+        .product-grid { padding: 0 18px 60px; }
+        .modal { flex-direction: column; max-height: 92vh; }
+        .modal-media { width: 100%; height: 200px; }
+        .profile-btn-text { display: none; }
+    }
+</style>
+</head>
+<body>
+
+<div class="topbar">Free shipping on orders over $50 &nbsp;&bull;&nbsp; <span>Sales-Savvy</span> — Flavours you'll love</div>
+
+<header>
+    <div class="header-inner">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12,2 C7,2 4,6 4,10 C4,16 12,22 12,22 C12,22 20,16 20,10 C20,6 17,2 12,2 Z"/>
+                    <path d="M12,6 L12,14" stroke-linecap="round"/>
+                    <circle cx="12" cy="10" r="2" fill="currentColor" stroke="none"/>
+                </svg>
+            </div>
+            <div class="logo-text">Sales-<span>Savvy</span></div>
+        </div>
+
+        <div class="search-bar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input type="text" id="searchInput" placeholder="Search for coffee, honey, spices...">
+        </div>
+
+        <div class="header-actions">
+            <button class="icon-btn" id="cartBtn" aria-label="View cart">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+
+            <a href="profile.html" class="profile-btn" id="profileBtn" aria-label="Go to profile">
+                <div class="profile-avatar" id="profileAvatar">JD</div>
+                <div class="profile-btn-text" id="profileText">
+                    <span id="profileName">User</span>
+                    <small id="profileRole">View profile</small>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="category-nav" id="categoryNav"></div><br>
+</header>
+
+<section class="hero">
+    <div class="hero-banner">
+        <div class="hero-text">
+            <h1><span style="color: #E8F5A0">Good products,</span>  <br><span style="color: #7CB342">Delivered to your door</span></h1>
+            <p>Hand-picked goods from independent producers — crafted, jarred, and curated with care. Discover your next favorite across food, home, and daily living.</p>
+        </div>
+        <div class="hero-badge">
+            <strong>50k+</strong>
+            <span>happy customers</span>
+        </div>
+    </div>
+</section>
+
+<div class="section-title">
+    <h2>Full Collection</h2>
+    <p id="resultCount"></p>
+</div>
+
+<div class="product-grid" id="productGrid"></div>
+
+<footer>
+    &copy; 2026 <strong>Sales-Savvy</strong>. All rights reserved.
+</footer>
+
+<!-- Quick View Modal -->
+<div class="overlay" id="overlay">
+    <div class="modal">
+        <button class="modal-close" id="modalClose" aria-label="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <div class="modal-media" id="modalMedia"></div>
+        <div class="modal-body">
+            <div class="modal-cat" id="modalCat"></div>
+            <h2 id="modalName"></h2>
+            <div class="product-rating" id="modalRating"></div>
+            <p class="modal-desc" id="modalDesc"></p>
+            <div class="modal-price-row">
+                <div class="modal-price" id="modalPrice"></div>
+                <div class="qty-control">
+                    <button id="qtyMinus">−</button>
+                    <span id="qtyValue">1</span>
+                    <button id="qtyPlus">+</button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" id="modalAddCart">Add to Cart</button>
+                <button class="btn btn-solid" id="modalBuyNow">Buy Now</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cart Drawer -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+        <h3>Your Cart</h3>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="clear-cart-btn" id="clearCartBtn">Clear all</button>
+            <button class="modal-close" id="drawerClose" aria-label="Close cart">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+        <div class="cart-total-row"><span>Total</span><span id="cartTotal">$0.00</span></div>
+        <button class="btn btn-solid" style="width:100%; padding:14px;" id="checkoutBtn">Buy Now</button>
+    </div>
+</div>
+
+<!-- Profile Drawer -->
+<div class="drawer-overlay" id="profileOverlay"></div>
+<div class="profile-drawer" id="profileDrawer">
+    <div class="profile-header">
+        <h3>My Account</h3>
+        <button class="modal-close" id="profileDrawerClose" aria-label="Close profile">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+    </div>
+    <div class="profile-body">
+        <div class="profile-card-large">
+            <div class="profile-avatar-large" id="profileAvatarLarge">U</div>
+            <div class="profile-info-large">
+                <div id="profileNameLarge">User</div>
+                <div id="profileRoleLarge">Customer</div>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <button class="profile-option" id="editProfileToggle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <span>Edit Profile</span>
+            </button>
+            <div class="edit-profile-form" id="editProfileForm">
+                <label for="editNameInput">Display Name</label>
+                <input type="text" id="editNameInput" placeholder="Your name">
+                <label for="editUsernameInput">Username</label>
+                <input type="text" id="editUsernameInput" placeholder="Your username">
+                <button class="btn btn-solid" id="saveNameBtn" style="width:100%;">Save Changes</button>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <button class="profile-option profile-option-danger" id="logoutBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Log Out</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+ <script src="/js/customer-home.js"></script>
+</body>
+</html>

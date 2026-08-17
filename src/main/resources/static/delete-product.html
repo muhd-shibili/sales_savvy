@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Delete Product</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+    :root {
+    --bg: #07160f;
+    --surface: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+    --text: #f4f7ea;
+    --muted: #a3b8a9;
+    --border: rgba(236,248,137,0.14);
+    --accent: #ecf889;
+    --accent-contrast: #0a2013;
+    --danger: #f0625d;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --shadow: 0 1px 0 rgba(236,248,137,0.05) inset, 0 16px 34px -18px rgba(0,0,0,0.6);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100%; }
+  body {
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(236,248,137,0.06), transparent 60%),
+      radial-gradient(ellipse 800px 600px at 100% 100%, rgba(16,91,47,0.35), transparent 60%),
+      linear-gradient(160deg, #0f2c1c 0%, var(--bg) 55%, #051007 100%);
+    color: var(--text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px;
+    min-height: 100vh;
+  }
+
+  .stage {
+    width: 100%;
+    max-width: 640px;
+    animation: fadeUp 0.7s var(--ease) both;
+    padding-top: 24px;
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: none;
+    padding: 6px 10px;
+    margin-bottom: 18px;
+    border-radius: 999px;
+    transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .back:hover { background: rgba(236,248,137,0.06); color: var(--accent); border-color: var(--border); }
+  .back svg { width: 14px; height: 14px; }
+
+  h1 {
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 30px;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+    text-align: center;
+  }
+  p.sub {
+    margin: 0 0 32px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .card {
+    position: relative;
+    background: var(--surface);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: var(--shadow);
+    animation: rise 0.6s var(--ease) 0.05s both;
+    overflow: hidden;
+    transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  }
+  .card + .card { margin-top: 20px; }
+
+  /* same cursor-follow sheen used on admin-home's cards */
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: radial-gradient(480px circle at var(--x, 50%) var(--y, 0%), rgba(236,248,137,0.07), transparent 55%);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease);
+    pointer-events: none;
+  }
+  .card:hover {
+    border-color: rgba(236,248,137,0.28);
+    box-shadow: var(--shadow), 0 0 0 1px rgba(236,248,137,0.15);
+  }
+  .card:hover::before { opacity: 1; }
+  .card > * { position: relative; z-index: 1; }
+
+  .card h2 {
+    font-family: "Fraunces", serif;
+    font-weight: 600;
+    font-size: 15px;
+    margin: 0 0 4px;
+  }
+  .card .card-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin: 0 0 18px;
+  }
+
+  form { display: flex; flex-direction: column; gap: 18px; }
+
+  .lookup-row { display: flex; gap: 10px; align-items: flex-end; }
+  .lookup-row .field { flex: 1; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 13px; font-weight: 600; color: var(--text); }
+
+  input, textarea {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.25s var(--ease), background 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  }
+  input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.7; }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+  input:focus, textarea:focus {
+    border-color: var(--accent);
+    background: rgba(236,248,137,0.05);
+    box-shadow: 0 0 0 3px rgba(236,248,137,0.12);
+  }
+  input[readonly], textarea[readonly] {
+    background: rgba(255,255,255,0.015);
+    color: var(--muted);
+  }
+  input[readonly]:focus, textarea[readonly]:focus {
+    box-shadow: none;
+    border-color: var(--border);
+  }
+
+  .price-wrap { position: relative; }
+  .price-wrap span {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 14px;
+    pointer-events: none;
+  }
+  .price-wrap input { padding-left: 26px; }
+
+  .photo-preview {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .photo-preview .thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-sm);
+    background: rgba(236,248,137,0.08);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .photo-preview .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+  }
+  .photo-preview .thumb svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--muted);
+    fill: none;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 13px 20px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.3s var(--ease), opacity 0.25s var(--ease), background 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--accent); color: var(--accent-contrast); }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -8px rgba(236,248,137,0.45);
+    opacity: 1;
+  }
+  .btn-danger { background: var(--danger); color: #2a0906; }
+  .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -8px rgba(240,98,93,0.5);
+    opacity: 1;
+  }
+
+  .btn:focus-visible,
+  .back:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .message {
+    margin-top: 18px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: rgba(236,248,137,0.08);
+    border: 1px solid rgba(236,248,137,0.18);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .message.error {
+    background: rgba(240,98,93,0.12);
+    border: 1px solid rgba(240,98,93,0.3);
+    color: var(--danger);
+  }
+
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    transition: opacity 0.35s var(--ease);
+  }
+  fieldset[disabled] { opacity: 0.45; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  /* Delete-success overlay */
+  .success-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 16, 10, 0.68);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s var(--ease), backdrop-filter 0.3s var(--ease);
+  }
+  .success-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .success-panel {
+    position: relative;
+    background: #0c2317;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow), 0 0 0 1px rgba(240,98,93,0.16);
+    padding: 40px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    transform: scale(0.6) translateY(10px);
+    opacity: 0;
+    transition: transform 0.1s linear, opacity 0.1s linear;
+  }
+  .success-overlay.show .success-panel {
+    animation: panelPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  @keyframes panelPop {
+    0%   { transform: scale(0.6) translateY(10px); opacity: 0; }
+    60%  { transform: scale(1.04) translateY(0); opacity: 1; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  .success-icon-wrap {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .success-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--danger);
+    opacity: 0;
+  }
+  .success-overlay.show .success-ring {
+    animation: ringPulse 0.9s var(--ease) 0.25s forwards;
+  }
+  @keyframes ringPulse {
+    0%   { transform: scale(0.7); opacity: 0.6; }
+    100% { transform: scale(1.7); opacity: 0; }
+  }
+
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    position: relative;
+    z-index: 1;
+  }
+  .success-icon circle {
+    fill: none;
+    stroke: var(--danger);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    transform-origin: center;
+  }
+  .success-overlay.show .success-icon circle {
+    animation: circleDraw 0.45s var(--ease) 0.1s forwards;
+  }
+  /* trash-can glyph draws in after the ring, in place of a checkmark */
+  .success-icon .trash-lid,
+  .success-icon .trash-body,
+  .success-icon .trash-line {
+    fill: none;
+    stroke: var(--danger);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .success-icon .trash-lid { stroke-dasharray: 30; stroke-dashoffset: 30; }
+  .success-icon .trash-body { stroke-dasharray: 46; stroke-dashoffset: 46; }
+  .success-icon .trash-line { stroke-dasharray: 10; stroke-dashoffset: 10; }
+  .success-overlay.show .success-icon .trash-lid {
+    animation: checkDraw 0.25s var(--ease) 0.48s forwards;
+  }
+  .success-overlay.show .success-icon .trash-body {
+    animation: checkDraw 0.3s var(--ease) 0.62s forwards, checkPop 0.3s var(--ease) 0.92s;
+  }
+  .success-overlay.show .success-icon .trash-line {
+    animation: checkDraw 0.2s var(--ease) 0.78s forwards;
+  }
+  @keyframes circleDraw {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes checkDraw {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes checkPop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+
+  .success-text {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  .success-overlay.show .success-text {
+    animation: textRise 0.4s var(--ease) 0.55s forwards;
+  }
+  @keyframes textRise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 560px) {
+    h1 { font-size: 22px; }
+    .card { padding: 22px; }
+    .lookup-row { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+    <main class="stage">
+        <a class="back" href="product-management.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+            Back
+        </a>
+
+        <h1>Delete Product</h1>
+        <p class="sub">Enter a product ID to retrieve its details, then confirm deletion.</p>
+
+        <!-- Lookup -->
+        <div class="card">
+            <h2>Find product</h2>
+            <p class="card-sub">Enter the product ID to load its current details.</p>
+            <div class="lookup-row">
+                <div class="field">
+                    <label for="id">Product ID</label>
+                    <input type="number" id="id" />
+                </div>
+                <button type="button" class="btn btn-primary" onclick="getProduct()">Find product</button>
+            </div>
+            <div id="lookupMessageArea"></div>
+        </div>
+
+        <!-- Product details -->
+        <div class="card">
+            <h2>Product details</h2>
+            <p class="card-sub">Review the details below before deleting.</p>
+
+            <form onsubmit="return false;">
+                <fieldset id="detailsFieldset" disabled>
+                    <div class="field">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" readonly />
+                    </div>
+
+                    <div class="field">
+                        <label for="description">Description</label>
+                        <textarea id="description" readonly></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label for="price">Price</label>
+                        <div class="price-wrap">
+                            <span>$</span>
+                            <input type="number" id="price" style="padding-left: 26px;" readonly />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="photoUrl">Photo URL</label>
+                        <input type="text" id="photoUrl" readonly />
+                        <div class="photo-preview">
+                            <div class="thumb" id="thumb">
+                                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                                <img id="thumbImg" alt="Preview" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-danger" onclick="deleteProduct()">Delete Product</button>
+                </fieldset>
+            </form>
+
+            <div id="messageArea"></div>
+        </div>
+    </main>
+
+    <div class="success-overlay" id="deleteSuccessOverlay">
+        <div class="success-panel">
+            <div class="success-icon-wrap">
+                <div class="success-ring"></div>
+                <svg class="success-icon" viewBox="0 0 64 64">
+                    <circle cx="32" cy="32" r="26" />
+                    <path class="trash-lid" d="M20 22 L44 22 M26 22 L27 17 A2 2 0 0 1 29 15 L35 15 A2 2 0 0 1 37 17 L38 22" />
+                    <path class="trash-body" d="M23 26 L25.5 46 A2 2 0 0 0 27.5 48 L36.5 48 A2 2 0 0 0 38.5 46 L41 26" />
+                    <path class="trash-line" d="M32 30 L32 43" />
+                </svg>
+            </div>
+            <div class="success-text" id="deleteSuccessText">Product deleted!</div>
+        </div>
+    </div>
+
+    <script>
+        const thumb = document.getElementById("thumb");
+        const thumbImg = document.getElementById("thumbImg");
+        const thumbIcon = thumb.querySelector("svg");
+        const detailsFieldset = document.getElementById("detailsFieldset");
+
+        function updateThumb(url) {
+            if (!url) {
+                thumbImg.style.display = "none";
+                thumbIcon.style.display = "block";
+                return;
+            }
+            thumbImg.onload = function () {
+                thumbImg.style.display = "block";
+                thumbIcon.style.display = "none";
+            };
+            thumbImg.onerror = function () {
+                thumbImg.style.display = "none";
+                thumbIcon.style.display = "block";
+            };
+            thumbImg.src = url;
+        }
+
+        async function getProduct() {
+            const id = parseInt(document.getElementById("id").value);
+            const lookupMessageArea = document.getElementById("lookupMessageArea");
+            lookupMessageArea.innerHTML = "";
+
+            if (isNaN(id) || id <= 0) {
+                lookupMessageArea.innerHTML =
+                    `<div class="message error">Please enter a valid product ID.</div>`;
+                return;
+            }
+
+            const token = localStorage.getItem("token");   // <-- retrieve JWT
+
+            const response = await fetch(`/admin/viewProduct/${id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": token ? `Bearer ${token}` : ""   // <-- send it
+                }
+            });
+
+            if (!response.ok) {
+                lookupMessageArea.innerHTML =
+                    `<div class="message error">No product found with that ID. Please enter a valid ID.</div>`;
+                return;
+            }
+
+            const product = await response.json();
+
+            if (!product || !product.name) {
+                lookupMessageArea.innerHTML =
+                    `<div class="message error">No product found with that ID. Please enter a valid ID.</div>`;
+                return;
+            }
+
+            document.getElementById("name").value = product.name;
+            document.getElementById("description").value = product.description;
+            document.getElementById("price").value = product.price;
+            document.getElementById("photoUrl").value = product.photoUrl;
+
+            updateThumb(product.photoUrl);
+            detailsFieldset.disabled = false;
+
+            document.getElementById("messageArea").innerHTML =
+                `<div class="message">Product ${id} loaded.</div>`;
+        }
+
+        async function deleteProduct() {
+            const id = parseInt(document.getElementById("id").value);
+            const messageArea = document.getElementById("messageArea");
+
+            if (isNaN(id) || id <= 0) {
+                messageArea.innerHTML =
+                    `<div class="message error">Please enter a valid product ID.</div>`;
+                return;
+            }
+
+            const token = localStorage.getItem("token");   // <-- retrieve JWT
+
+            const response = await fetch(`/admin/deleteProduct/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": token ? `Bearer ${token}` : ""   // <-- send it
+                }
+            });
+
+            const result = await response.text();
+
+            if (!response.ok) {
+                messageArea.innerHTML =
+                    `<div class="message error">${result}</div>`;
+                return;
+            }
+
+            const deletedName = document.getElementById("name").value;
+            showDeleteSuccessAndReset(deletedName, result);
+        }
+
+        function showDeleteSuccessAndReset(deletedName, resultText) {
+            const overlay = document.getElementById("deleteSuccessOverlay");
+            const textEl = document.getElementById("deleteSuccessText");
+            textEl.textContent = deletedName ? `"${deletedName}" deleted!` : (resultText || "Product deleted!");
+
+            overlay.classList.add("show");
+
+            setTimeout(() => {
+                overlay.classList.remove("show");
+
+                detailsFieldset.disabled = true;
+                document.getElementById("id").value = "";
+                document.getElementById("name").value = "";
+                document.getElementById("description").value = "";
+                document.getElementById("price").value = "";
+                document.getElementById("photoUrl").value = "";
+                updateThumb("");
+
+                document.getElementById("lookupMessageArea").innerHTML = "";
+                document.getElementById("messageArea").innerHTML = "";
+                document.getElementById("id").focus();
+            }, 1700);
+        }
+    </script>
+
+    <script>
+        // Purely cosmetic: drives the cursor-follow sheen (--x/--y) on each card,
+        // same effect as the option cards on admin-home. Does not touch any
+        // lookup/delete logic above.
+        document.querySelectorAll('.card').forEach(function (card) {
+            card.addEventListener('mousemove', function (e) {
+                var rect = card.getBoundingClientRect();
+                card.style.setProperty('--x', (e.clientX - rect.left) + 'px');
+                card.style.setProperty('--y', (e.clientY - rect.top) + 'px');
+            });
+        });
+    </script>
+</body>
+</html>

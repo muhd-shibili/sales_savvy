@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesSavvy — Create Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #F9FBE7;
+            --white: #FFFFFF;
+            --green-dark: #1B4D3E;
+            --green-primary: #2D5016;
+            --green-accent: #7CB342;
+            --green-light: #E8F5A0;
+            --orange: #E65100;
+            --orange-soft: #F57F17;
+            --red: #C62828;
+            --purple: #6A1B9A;
+            --yellow: #F9D71C;
+            --text-dark: #1A1A1A;
+            --text-muted: #5C5C5C;
+            --border: #E0E0E0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            cursor: default;
+        }
+
+        /* Animated background shapes */
+        .bg-shapes {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.15;
+            transition: transform 0.3s ease-out;
+            will-change: transform;
+        }
+
+        .shape-1 {
+            top: -5%;
+            left: -5%;
+            width: 400px;
+            height: 400px;
+            color: var(--green-accent);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .shape-2 {
+            top: 10%;
+            right: -3%;
+            width: 300px;
+            height: 300px;
+            color: var(--orange-soft);
+            animation: float 10s ease-in-out infinite 1s;
+        }
+
+        .shape-3 {
+            bottom: -8%;
+            left: 15%;
+            width: 350px;
+            height: 350px;
+            color: var(--purple);
+            animation: float 9s ease-in-out infinite 2s;
+        }
+
+        .shape-4 {
+            bottom: 15%;
+            right: 10%;
+            width: 250px;
+            height: 250px;
+            color: var(--red);
+            animation: float 7s ease-in-out infinite 0.5s;
+        }
+
+        .shape-5 {
+            top: 40%;
+            left: 5%;
+            width: 180px;
+            height: 180px;
+            color: var(--yellow);
+            animation: float 11s ease-in-out infinite 1.5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(5deg); }
+        }
+
+        /* Main container */
+        .signup-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1100px;
+            padding: 20px;
+            display: flex;
+            gap: 0;
+            align-items: stretch;
+        }
+
+        /* Left panel - Branding */
+        .brand-panel {
+            flex: 1;
+            background: var(--green-dark);
+            border-radius: 24px 0 0 24px;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+            min-height: 640px;
+            box-shadow: 0 25px 80px rgba(27, 77, 62, 0.25);
+        }
+
+        .brand-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(124, 179, 66, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .brand-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -30%;
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(245, 127, 23, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .brand-header {
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--green-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--green-dark);
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .brand-tagline {
+            font-size: 15px;
+            opacity: 0.85;
+            line-height: 1.6;
+            max-width: 320px;
+        }
+
+        .brand-features {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.14);
+            transform: translateX(8px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-icon.orange { background: var(--orange-soft); }
+        .feature-icon.purple { background: var(--purple); }
+        .feature-icon.red { background: var(--red); }
+        .feature-icon.green { background: var(--green-accent); }
+
+        .feature-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .feature-text small {
+            display: block;
+            font-size: 12px;
+            opacity: 0.7;
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        /* Right panel - Signup form */
+        .form-panel {
+            flex: 1;
+            background: var(--white);
+            border-radius: 0 24px 24px 0;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.08);
+            position: relative;
+            min-height: 640px;
+        }
+
+        .form-header {
+            margin-bottom: 36px;
+        }
+
+        .form-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .form-header p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 18px 16px 48px;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            font-size: 15px;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-dark);
+            background: var(--white);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        .form-input::placeholder {
+            color: #AAA;
+        }
+
+        .form-input:hover {
+            border-color: var(--green-accent);
+            background: #FAFFF5;
+        }
+
+        .form-input:focus {
+            border-color: var(--green-primary);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(124, 179, 66, 0.15);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #AAA;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .form-input:focus ~ .input-icon,
+        .form-input:not(:placeholder-shown) ~ .input-icon {
+            color: var(--green-primary);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #AAA;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        .password-toggle:hover {
+            color: var(--green-primary);
+        }
+
+        .btn-signup {
+            width: 100%;
+            padding: 16px;
+            background: var(--green-primary);
+            color: var(--white);
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(45, 80, 22, 0.25);
+            margin-top: 8px;
+        }
+
+        .btn-signup::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(45, 80, 22, 0.35);
+            background: var(--green-dark);
+        }
+
+        .btn-signup:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-signup:active {
+            transform: translateY(0);
+        }
+
+        .btn-signup span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 28px 0;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .social-login {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            border-color: var(--green-accent);
+            background: #FAFFF5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .login-prompt {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .login-prompt a {
+            color: var(--green-primary);
+            text-decoration: none;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .login-prompt a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--green-primary);
+            transition: width 0.3s ease;
+        }
+
+        .login-prompt a:hover::after {
+            width: 100%;
+        }
+
+        /* Decorative dots */
+        .dots-pattern {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            opacity: 0.08;
+            pointer-events: none;
+        }
+
+        .dots-pattern.top-right {
+            top: 30px;
+            right: 30px;
+        }
+
+        .dots-pattern.bottom-left {
+            bottom: 30px;
+            left: 30px;
+        }
+
+        /* Floating botanical elements */
+        .botanical {
+            position: absolute;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.6;
+            transition: transform 0.2s ease-out;
+        }
+
+        .botanical-1 {
+            top: 8%;
+            right: 8%;
+            color: var(--orange-soft);
+        }
+
+        .botanical-2 {
+            bottom: 12%;
+            left: 6%;
+            color: var(--green-accent);
+        }
+
+        .botanical-3 {
+            top: 50%;
+            right: 4%;
+            color: var(--purple);
+        }
+
+        /* Input focus line animation */
+        .input-line {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--green-primary);
+            transition: all 0.4s ease;
+            border-radius: 0 0 14px 14px;
+        }
+
+        .form-input:focus ~ .input-line {
+            left: 0;
+            width: 100%;
+        }
+
+        /* Shake animation for errors */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* Success pulse */
+        @keyframes successPulse {
+            0% { box-shadow: 0 0 0 0 rgba(124, 179, 66, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(124, 179, 66, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(124, 179, 66, 0); }
+        }
+
+        .success-pulse {
+            animation: successPulse 0.8s ease-out;
+        }
+
+        /* Message area for errors (hidden by default, shown by JS) */
+        .form-message {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            min-height: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .form-message.visible {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .signup-wrapper {
+                flex-direction: column;
+                max-width: 480px;
+            }
+            .brand-panel {
+                border-radius: 24px 24px 0 0;
+                min-height: auto;
+                padding: 40px 30px;
+            }
+            .form-panel {
+                border-radius: 0 0 24px 24px;
+                min-height: auto;
+                padding: 40px 30px;
+            }
+            .brand-features {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background SVG Shapes -->
+    <div class="bg-shapes" id="bgShapes">
+        <svg class="shape shape-1" viewBox="0 0 200 200" fill="currentColor">
+            <path d="M100,10 C120,40 160,50 180,80 C200,110 190,150 160,170 C130,190 90,180 60,160 C30,140 20,100 40,70 C60,40 80,20 100,10 Z"/>
+        </svg>
+        <svg class="shape shape-2" viewBox="0 0 200 200" fill="currentColor">
+            <circle cx="100" cy="100" r="80"/>
+        </svg>
+        <svg class="shape shape-3" viewBox="0 0 200 200" fill="currentColor">
+            <path d="M100,20 L180,180 L20,180 Z"/>
+        </svg>
+        <svg class="shape shape-4" viewBox="0 0 200 200" fill="currentColor">
+            <rect x="40" y="40" width="120" height="120" rx="30"/>
+        </svg>
+        <svg class="shape shape-5" viewBox="0 0 200 200" fill="currentColor">
+            <path d="M100,30 Q130,60 160,100 Q130,140 100,170 Q70,140 40,100 Q70,60 100,30 Z"/>
+        </svg>
+    </div>
+
+    <!-- Floating Botanical Elements -->
+    <svg class="botanical botanical-1" width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M40,70 Q40,40 20,20" stroke-linecap="round"/>
+        <path d="M40,70 Q40,40 60,20" stroke-linecap="round"/>
+        <path d="M40,70 L40,50" stroke-linecap="round"/>
+        <circle cx="20" cy="20" r="6" fill="currentColor" stroke="none"/>
+        <circle cx="60" cy="20" r="6" fill="currentColor" stroke="none"/>
+        <circle cx="40" cy="50" r="4" fill="currentColor" stroke="none"/>
+        <path d="M15,25 Q10,15 20,10 Q30,15 25,25" fill="currentColor" stroke="none" opacity="0.5"/>
+        <path d="M55,25 Q50,15 60,10 Q70,15 65,25" fill="currentColor" stroke="none" opacity="0.5"/>
+    </svg>
+
+    <svg class="botanical botanical-2" width="100" height="100" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M50,90 Q50,50 30,30" stroke-linecap="round"/>
+        <path d="M50,90 Q50,50 70,30" stroke-linecap="round"/>
+        <path d="M50,90 Q50,60 50,40" stroke-linecap="round"/>
+        <ellipse cx="30" cy="30" rx="10" ry="6" transform="rotate(-30 30 30)" fill="currentColor" stroke="none"/>
+        <ellipse cx="70" cy="30" rx="10" ry="6" transform="rotate(30 70 30)" fill="currentColor" stroke="none"/>
+        <ellipse cx="50" cy="40" rx="8" ry="5" fill="currentColor" stroke="none"/>
+    </svg>
+
+    <svg class="botanical botanical-3" width="60" height="60" viewBox="0 0 60 60" fill="currentColor">
+        <path d="M30,5 L35,20 L50,20 L38,30 L43,45 L30,35 L17,45 L22,30 L10,20 L25,20 Z" opacity="0.7"/>
+    </svg>
+
+    <div class="signup-wrapper" id="signupCard">
+        <!-- Brand Panel -->
+        <div class="brand-panel">
+            <div class="brand-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12,2 C7,2 4,6 4,10 C4,16 12,22 12,22 C12,22 20,16 20,10 C20,6 17,2 12,2 Z"/>
+                            <path d="M12,6 L12,14" stroke-linecap="round"/>
+                            <circle cx="12" cy="10" r="2" fill="currentColor" stroke="none"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">Sales-<span>Savvy</span></div>
+                </div>
+                <p class="brand-tagline">
+                    Sales-Savvy made Easier. Flavours you'll love, with products your body and wallet will thank you for.
+                </p>
+            </div>
+
+            <div class="brand-features">
+                <div class="feature-item">
+                    <div class="feature-icon orange">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+                            <path d="M12,2 L15,9 L22,9 L16,14 L18,21 L12,17 L6,21 L8,14 L2,9 L9,9 Z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        Premium Quality
+                        <small>Premium products recognised globally</small>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon purple">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12,6 L12,12 L16,14"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        Fast Delivery
+                        <small>Same-day shipping on all orders</small>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon red">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+                            <path d="M20.84,4.61a5.5,5.5 0 0,0-7.78,0L12,5.67l-1.06-1.06a5.5,5.5 0 0,0-7.78,7.78l1.06,1.06L12,21.23l7.78-7.78,1.06-1.06a5.5,5.5 0 0,0,0-7.78z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        Loved by Thousands
+                        <small>Join 50,000+ happy customers</small>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon green">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+                            <path d="M12,22s8-4,8-10V5l-8-3-8,3v7C4,18,12,22,12,22z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        Secure Checkout
+                        <small>256-bit SSL encryption</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Panel -->
+        <div class="form-panel">
+            <svg class="dots-pattern top-right" viewBox="0 0 100 100">
+                <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <circle cx="2" cy="2" r="2" fill="#1B4D3E"/>
+                </pattern>
+                <rect width="100" height="100" fill="url(#dots)"/>
+            </svg>
+
+            <div class="form-header">
+                <h1>Create Account</h1>
+                <p>Fill in your details to get started</p>
+            </div>
+
+            <!-- Error / success message area -->
+            <div id="message" class="form-message"></div>
+
+            <form id="signupForm" autocomplete="off">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <div class="input-wrapper">
+                        <input type="text" class="form-input" id="name" placeholder="Enter your full name" required>
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <path d="M20,21V19a4,4 0 0,0-4-4H8a4,4 0 0,0-4,4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <div class="input-line"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" class="form-input" id="username" placeholder="Choose a username" required>
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <path d="M20,21V19a4,4 0 0,0-4-4H8a4,4 0 0,0-4,4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <div class="input-line"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" class="form-input" id="password" placeholder="Create a password" required>
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7,11V7a5,5 0 0,1 10,0v4"/>
+                        </svg>
+                        <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+                            <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <path d="M1,12S5,4 12,4s11,8 11,8-4,8-11,8S1,12 1,12z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                        <div class="input-line"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-signup" id="signupBtn">
+                    <span>Create Account</span>
+                </button>
+            </form>
+
+            <div class="divider">or sign up with</div>
+
+            <div class="social-login">
+                <button class="social-btn" type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Google
+                </button>
+                <button class="social-btn" type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                    Facebook
+                </button>
+            </div>
+
+            <div class="login-prompt">
+                Already have an account? <a href="/login.html">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- External JS file — all auth logic + UI animations live here -->
+    <script src="/js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Add Product</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07160f;
+    --surface: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+    --text: #f4f7ea;
+    --muted: #a3b8a9;
+    --border: rgba(236,248,137,0.14);
+    --accent: #ecf889;
+    --accent-contrast: #0a2013;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --shadow: 0 1px 0 rgba(236,248,137,0.05) inset, 0 16px 34px -18px rgba(0,0,0,0.6);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100%; }
+  body {
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(236,248,137,0.06), transparent 60%),
+      radial-gradient(ellipse 800px 600px at 100% 100%, rgba(16,91,47,0.35), transparent 60%),
+      linear-gradient(160deg, #0f2c1c 0%, var(--bg) 55%, #051007 100%);
+    color: var(--text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  .stage { width: 100%; max-width: 640px; animation: fadeUp 0.7s var(--ease) both; padding-top: 24px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600;
+    color: var(--muted); text-decoration: none; cursor: pointer; border: 1px solid transparent;
+    background: none; padding: 6px 10px; margin-bottom: 18px; border-radius: 999px;
+    transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .back:hover { background: rgba(236,248,137,0.06); color: var(--accent); border-color: var(--border); }
+  .back svg { width: 14px; height: 14px; }
+  h1 { font-family: "Fraunces", serif; font-style: italic; font-weight: 600; font-size: 30px; letter-spacing: -0.01em; margin: 0 0 6px; text-align: center; }
+  p.sub { margin: 0 0 32px; text-align: center; color: var(--muted); font-size: 14px; }
+  .card {
+    position: relative; background: var(--surface); backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow);
+    animation: rise 0.6s var(--ease) 0.05s both; overflow: hidden;
+    transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  }
+  .card::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(480px circle at var(--x, 50%) var(--y, 0%), rgba(236,248,137,0.07), transparent 55%);
+    opacity: 0; transition: opacity 0.4s var(--ease); pointer-events: none;
+  }
+  .card:hover { border-color: rgba(236,248,137,0.28); box-shadow: var(--shadow), 0 0 0 1px rgba(236,248,137,0.15); }
+  .card:hover::before { opacity: 1; }
+  .card > * { position: relative; z-index: 1; }
+  form { display: flex; flex-direction: column; gap: 18px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 13px; font-weight: 600; color: var(--text); }
+  .field .hint { font-size: 12px; color: var(--muted); }
+  .field-row { display: flex; gap: 18px; }
+  .field-row .field { flex: 1; min-width: 0; }
+  @media (max-width: 480px) { .field-row { flex-direction: column; gap: 18px; } }
+  input, textarea, select {
+    font-family: inherit; font-size: 14px; padding: 12px 14px;
+    border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03); color: var(--text); outline: none;
+    transition: border-color 0.25s var(--ease), background 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  }
+  input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.7; }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent); background: rgba(236,248,137,0.05);
+    box-shadow: 0 0 0 3px rgba(236,248,137,0.12);
+  }
+  .price-wrap { position: relative; }
+  .price-wrap span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
+  .price-wrap input { padding-left: 26px; }
+  .photo-preview { display: flex; align-items: center; gap: 14px; margin-top: 4px; }
+  .photo-preview .thumb {
+    width: 64px; height: 64px; border-radius: var(--radius-sm);
+    background: rgba(236,248,137,0.08); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;
+  }
+  .photo-preview .thumb img { width: 100%; height: 100%; object-fit: cover; display: none; }
+  .photo-preview .thumb svg { width: 22px; height: 22px; stroke: var(--muted); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  .photo-preview .placeholder-text { font-size: 12px; color: var(--muted); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: inherit; font-size: 14px; font-weight: 600; padding: 13px 20px;
+    border-radius: 999px; border: 1px solid transparent; cursor: pointer;
+    transition: transform 0.3s var(--ease), opacity 0.25s var(--ease), background 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease);
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--accent); color: var(--accent-contrast); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -8px rgba(236,248,137,0.45); }
+  .btn-ghost { background: transparent; border-color: var(--border); color: var(--text); }
+  .btn-ghost:hover { background: rgba(236,248,137,0.06); border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+  .btn-row { display: flex; gap: 12px; margin-top: 6px; }
+  .msg {
+    display: none; font-size: 13px; font-weight: 600; padding: 10px 14px;
+    border-radius: var(--radius-sm); margin-bottom: 18px;
+  }
+  .msg.show { display: block; }
+  .msg.success { background: rgba(52,211,153,0.12); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.28); }
+  .msg.error { background: rgba(248,113,113,0.12); color: #fca5a5; border: 1px solid rgba(248,113,113,0.28); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .add-success-overlay {
+    position: absolute; inset: 0; background: rgba(7, 22, 15, 0.82);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center; z-index: 10;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s var(--ease);
+  }
+  .add-success-overlay.show { opacity: 1; pointer-events: auto; }
+  .add-success-panel { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .shop-wrap { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
+  .shop-icon { width: 76px; height: 76px; opacity: 0; transform: scale(0.95); }
+  .add-success-overlay.show .shop-icon { animation: shopFadeIn 0.3s var(--ease) forwards; }
+  @keyframes shopFadeIn { to { opacity: 1; transform: scale(1); } }
+  .shop-icon path, .shop-icon rect { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; }
+  .add-success-overlay.show .shop-icon .p-roof { animation: strokeDraw 0.45s var(--ease) 0.05s forwards; }
+  .add-success-overlay.show .shop-icon .p-valance { animation: strokeDraw 0.5s var(--ease) 0.3s forwards; }
+  .add-success-overlay.show .shop-icon .p-body { animation: strokeDraw 0.5s var(--ease) 0.55s forwards; }
+  .add-success-overlay.show .shop-icon .p-window-l { animation: strokeDraw 0.3s var(--ease) 0.85s forwards; }
+  .add-success-overlay.show .shop-icon .p-window-r { animation: strokeDraw 0.3s var(--ease) 0.92s forwards; }
+  .add-success-overlay.show .shop-icon .p-door { animation: strokeDraw 0.35s var(--ease) 1s forwards; }
+  @keyframes strokeDraw { to { stroke-dashoffset: 0; } }
+  .add-success-text { font-size: 15px; font-weight: 700; color: var(--text); opacity: 0; transform: translateY(6px); }
+  .add-success-overlay.show .add-success-text { animation: addTextRise 0.4s var(--ease) 1.3s forwards; }
+  @keyframes addTextRise { to { opacity: 1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+  @media (max-width: 560px) { h1 { font-size: 22px; } .card { padding: 22px; } }
+</style>
+</head>
+<body>
+  <main class="stage">
+    <a class="back" href="product-management.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Back
+    </a>
+
+    <h1>Add Product</h1>
+    <p class="sub">Fill in the details to add a new product to your catalog.</p>
+
+    <div class="card">
+      <div class="add-success-overlay" id="addSuccessOverlay">
+        <div class="add-success-panel">
+          <div class="shop-wrap">
+            <svg class="shop-icon" viewBox="0 0 64 64">
+              <path class="p-roof" pathLength="100" d="M12 18 L16 8 L48 8 L52 18" />
+              <path class="p-valance" pathLength="100" d="M12 18 Q17 26 22 18 Q27 26 32 18 Q37 26 42 18 Q47 26 52 18" />
+              <rect class="p-body" pathLength="100" x="14" y="18" width="36" height="28" rx="1" />
+              <rect class="p-window-l" pathLength="100" x="19" y="23" width="8" height="7" />
+              <rect class="p-window-r" pathLength="100" x="37" y="23" width="8" height="7" />
+              <rect class="p-door" pathLength="100" x="27" y="32" width="10" height="14" />
+            </svg>
+          </div>
+          <div class="add-success-text">Product added!</div>
+        </div>
+      </div>
+
+      <div class="msg" id="form-msg"></div>
+
+      <form id="add-form">
+        <div class="field">
+          <label for="name">Product name</label>
+          <input id="name" type="text" placeholder="e.g. Wireless Mouse" required />
+        </div>
+
+        <div class="field">
+          <label for="description">Product description</label>
+          <textarea id="description" placeholder="Short description of the product"></textarea>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="price">Price</label>
+            <div class="price-wrap">
+              <span>$</span>
+              <input id="price" type="number" min="0" step="0.01" placeholder="0.00" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="stockCount">Stock count</label>
+            <input id="stockCount" type="number" min="0" step="1" placeholder="0" required />
+            <div class="hint">Units in stock</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="category">Category</label>
+          <input id="category" type="text" placeholder="e.g. Electronics" required />
+        </div>
+
+        <div class="field">
+          <label for="photoUrl">Photo URL</label>
+          <input id="photoUrl" type="url" placeholder="https://example.com/image.jpg" />
+          <div class="photo-preview">
+            <div class="thumb" id="thumb">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <img id="thumb-img" alt="Preview" />
+            </div>
+            <div class="placeholder-text">Preview appears here once a valid image URL is entered.</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button type="submit" class="btn btn-primary" onclick="addProduct(event)">Add product</button>
+          <button type="reset" class="btn btn-ghost">Clear</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    // ─── Self-contained auth helpers (no external auth.js needed) ───
+    function getToken() { return localStorage.getItem('token'); }
+    function getUser() {
+      try { return JSON.parse(localStorage.getItem('auth_user')); } catch(e) { return null; }
+    }
+    function isAuthenticated() {
+      const t = getToken();
+      if (!t) return false;
+      try { const p = JSON.parse(atob(t.split('.')[1])); return Date.now() < p.exp * 1000; } catch(e) { return false; }
+    }
+    function isAdmin() { const u = getUser(); return u && u.role === 'ADMIN'; }
+
+    // ─── Auth Guard ─────────────────────────
+    if (!isAuthenticated()) {
+      window.location.replace('/login.html');
+    } else if (!isAdmin()) {
+      window.location.replace('/customer-home.html');
+    }
+
+    // ─── API helper with JWT ──────────────
+    async function apiRequest(endpoint, options) {
+      const token = getToken();
+      const res = await fetch(endpoint, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+          ...(options.headers || {})
+        }
+      });
+      if (res.status === 401) {
+        localStorage.clear();
+        window.location.href = '/login.html';
+        throw new Error('Session expired.');
+      }
+      return res;
+    }
+
+    // ─── Photo Preview ──────────────────────
+    const photoInput = document.getElementById('photoUrl');
+    const thumbImg = document.getElementById('thumb-img');
+    const thumbIcon = document.querySelector('#thumb svg');
+
+    photoInput.addEventListener('input', function () {
+      const url = photoInput.value.trim();
+      if (!url) { thumbImg.style.display = 'none'; thumbIcon.style.display = 'block'; return; }
+      thumbImg.onload = function () { thumbImg.style.display = 'block'; thumbIcon.style.display = 'none'; };
+      thumbImg.onerror = function () { thumbImg.style.display = 'none'; thumbIcon.style.display = 'block'; };
+      thumbImg.src = url;
+    });
+
+    // ─── Submit Handler ─────────────────────
+    async function addProduct(event) {
+      if (event) event.preventDefault();
+      const msgBox = document.getElementById("form-msg");
+
+      const product = {
+        name: document.getElementById("name").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        price: parseFloat(document.getElementById("price").value),
+        stock: parseInt(document.getElementById("stockCount").value),
+        category: document.getElementById("category").value.trim(),
+        imageUrl: document.getElementById("photoUrl").value.trim()
+      };
+
+      if (!product.name || isNaN(product.price) || isNaN(product.stock) || !product.category) {
+        msgBox.textContent = "Please fill in Name, Price, Stock count, and Category.";
+        msgBox.className = "msg show error";
+        return;
+      }
+
+      try {
+        // CORRECT URL: /admin/addProduct
+        const response = await apiRequest("/admin/addProduct", {
+          method: "POST",
+          body: JSON.stringify(product)
+        });
+
+        if (response.ok) {
+          showAddSuccessAndReset(product.name);
+        } else {
+          let errorData = {};
+          try { errorData = await response.json(); } catch (e) {}
+          msgBox.textContent = errorData.message || "Failed to add product. Server returned " + response.status;
+          msgBox.className = "msg show error";
+        }
+      } catch (error) {
+        msgBox.textContent = "Unable to reach the server. Check console for details.";
+        msgBox.className = "msg show error";
+        console.error(error);
+      }
+    }
+
+    function showAddSuccessAndReset(productName) {
+      const overlay = document.getElementById("addSuccessOverlay");
+      const textEl = overlay.querySelector(".add-success-text");
+      textEl.textContent = `"${productName}" added!`;
+      overlay.classList.add("show");
+      setTimeout(() => {
+        overlay.classList.remove("show");
+        document.getElementById("add-form").reset();
+        msgBox.className = "msg";
+        msgBox.textContent = "";
+        thumbImg.style.display = 'none';
+        thumbIcon.style.display = 'block';
+      }, 2200);
+    }
+
+    // ─── Cursor Sheen Effect ────────────────
+    document.querySelectorAll('.card').forEach(function (card) {
+      card.addEventListener('mousemove', function (e) {
+        var rect = card.getBoundingClientRect();
+        card.style.setProperty('--x', (e.clientX - rect.left) + 'px');
+        card.style.setProperty('--y', (e.clientY - rect.top) + 'px');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View Cart</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="container wide-container">
+    <h1>My Cart</h1>
+    <p id="welcomeText"></p>
+
+    <div class="actions">
+      <button onclick="goBackToShopping()">Back to Shopping</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+
+    <div id="cartList"></div>
+    <h3 id="cartTotal"></h3>
+    <button id="checkoutBtn" onclick="checkout()">Proceed to Buy</button>
+  </div>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="/js/customer.js"></script>
+</body>
+</html>

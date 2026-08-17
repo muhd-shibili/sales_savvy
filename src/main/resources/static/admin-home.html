@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin — Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ---- token system, derived from ECF889 / 105B2F ---- */
+    --bg: #07160f;          /* deep, near-black forest — the premium base   */
+    --bg-1: #0b2216;
+    --bg-2: #0f2c1c;
+    --surface: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+    --text: #f4f7ea;
+    --muted: #a3b8a9;
+    --border: rgba(236,248,137,0.14);
+    --accent: #105b2f;       /* forest green — depth, default icon field   */
+    --accent-deep: #073318;  /* darker forest, for shadow & gradients      */
+    --accent-light: #ecf889; /* lime — the premium, glowing accent         */
+    --accent-light-soft: #d8ea79;
+    --accent-contrast: #0a2013; /* dark text set on top of lime fills      */
+    --radius: 20px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --shadow-soft: 0 1px 0 rgba(236,248,137,0.06) inset, 0 24px 50px -16px rgba(0,0,0,0.65);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+
+  body {
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(236,248,137,0.07), transparent 60%),
+      radial-gradient(ellipse 800px 600px at 100% 100%, rgba(16,91,47,0.35), transparent 60%),
+      linear-gradient(160deg, var(--bg-2) 0%, var(--bg) 55%, #051007 100%);
+    color: var(--text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+  }
+
+  /* fine gold-toned grain, kept very subtle for a premium, non-flat surface */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: radial-gradient(rgba(236,248,137,0.9) 0.6px, transparent 0.6px);
+    background-size: 3px 3px;
+  }
+
+  /* ---- ambient backdrop: two slow-drifting colour fields ---- */
+  .field {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(110px);
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.4;
+  }
+  .field.lime {
+    width: 480px; height: 480px;
+    left: -140px; top: -160px;
+    background: radial-gradient(circle at 30% 30%, var(--accent-light), transparent 70%);
+    opacity: 0.16;
+    animation: driftA 22s ease-in-out infinite;
+  }
+  .field.forest {
+    width: 640px; height: 640px;
+    right: -220px; bottom: -220px;
+    background: radial-gradient(circle at 60% 60%, var(--accent), transparent 70%);
+    opacity: 0.5;
+    animation: driftB 26s ease-in-out infinite;
+  }
+  @keyframes driftA {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(40px, 30px) scale(1.08); }
+  }
+  @keyframes driftB {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-30px, -20px) scale(1.1); }
+  }
+
+  .stage {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 760px;
+    animation: fadeUp 0.8s var(--ease) both;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 0 18px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-light-soft);
+    animation: fadeUp 0.7s var(--ease) 0.05s both;
+  }
+  .eyebrow::before,
+  .eyebrow::after {
+    content: "";
+    height: 1px;
+    width: 28px;
+    background: var(--border);
+  }
+  .eyebrow .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    box-shadow: 0 0 0 4px rgba(236,248,137,0.12);
+  }
+
+  h1 {
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 44px;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    text-align: center;
+    color: var(--text);
+  }
+  p.sub {
+    margin: 0 0 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+  }
+
+  .option {
+    --x: 50%;
+    --y: 0%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 30px 28px;
+    background: var(--surface);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--text);
+    cursor: pointer;
+    overflow: hidden;
+    isolation: isolate;
+    box-shadow: 0 1px 0 rgba(236,248,137,0.05) inset, 0 16px 34px -18px rgba(0,0,0,0.6);
+    transition:
+      transform 0.5s var(--ease),
+      box-shadow 0.5s var(--ease),
+      border-color 0.4s var(--ease);
+  }
+
+  /* cursor-follow sheen */
+  .option::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: radial-gradient(420px circle at var(--x) var(--y), rgba(236,248,137,0.35), transparent 55%);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease);
+    pointer-events: none;
+  }
+
+  /* signature interaction: a lime sweep rising from the base — the premium "reveal" */
+  .option::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 100%;
+    z-index: 0;
+    background: linear-gradient(175deg, var(--accent-light-soft), var(--accent-light) 65%);
+    transform: translateY(100%);
+    border-radius: var(--radius) var(--radius) 0 0;
+    transition: transform 0.55s var(--ease-spring);
+    pointer-events: none;
+  }
+
+  .option:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-soft), 0 0 0 1px rgba(236,248,137,0.25);
+    border-color: var(--accent-light);
+  }
+  .option:hover::before { opacity: 1; }
+  .option:hover::after  { transform: translateY(0%); }
+  .option:active { transform: translateY(-2px) scale(0.99); }
+
+  .option > * { position: relative; z-index: 1; }
+
+  .icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    background: rgba(236,248,137,0.12);
+    border: 1px solid rgba(236,248,137,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.45s var(--ease), transform 0.55s var(--ease-spring), box-shadow 0.45s var(--ease), border-color 0.45s var(--ease);
+  }
+  .option:hover .icon {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+    transform: rotate(-6deg) scale(1.08);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  }
+  .icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--accent-light);
+    fill: none;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 0.4s var(--ease);
+  }
+  .option:hover .icon svg { stroke: var(--accent-light); }
+
+  .label {
+    font-family: "Fraunces", serif;
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    transition: color 0.4s var(--ease);
+  }
+  .option:hover .label { color: var(--accent-contrast); }
+
+  .desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.55;
+    transition: color 0.4s var(--ease);
+  }
+  .option:hover .desc { color: rgba(10,32,19,0.72); }
+
+  .arrow {
+    position: absolute;
+    top: 26px;
+    right: 26px;
+    width: 18px;
+    height: 18px;
+    color: var(--accent-contrast);
+    opacity: 0;
+    transform: translateX(-8px) rotate(-45deg);
+    transition: opacity 0.4s var(--ease), transform 0.5s var(--ease-spring);
+  }
+  .option:hover .arrow {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+  }
+
+  .option:nth-child(1) { animation: rise 0.65s var(--ease) 0.12s both; }
+  .option:nth-child(2) { animation: rise 0.65s var(--ease) 0.22s both; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .options { grid-template-columns: 1fr; }
+    h1 { font-size: 30px; }
+  }
+
+  .option:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+  <div class="field lime"></div>
+  <div class="field forest"></div>
+  <main class="stage">
+    <div class="eyebrow"><span class="dot"></span>Admin console</div>
+    <h1>Welcome back, Admin</h1>
+    <p class="sub">Choose an option to continue</p>
+
+    <div class="options">
+      <a class="option" onclick="window.location.href='product-management.html';">
+        <div class="icon">
+          <svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>
+        </div>
+        <div class="label">Product Management</div>
+        <div class="desc">Create, edit and organize your product catalog.</div>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </a>
+
+      <a class="option" href="#users">
+        <div class="icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <div class="label">User Management</div>
+        <div class="desc">Manage customer accounts, profile details, and access.</div>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </main>
+
+  <script>
+    // Purely cosmetic: drives the cursor-follow sheen (--x/--y) on each card.
+    // Does not touch navigation logic (onclick / href remain untouched).
+    document.querySelectorAll('.option').forEach(function (card) {
+      card.addEventListener('mousemove', function (e) {
+        var rect = card.getBoundingClientRect();
+        card.style.setProperty('--x', (e.clientX - rect.left) + 'px');
+        card.style.setProperty('--y', (e.clientY - rect.top) + 'px');
+      });
+    });
+  </script>
+</body>
+</html>

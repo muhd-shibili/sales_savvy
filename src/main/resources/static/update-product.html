@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Update Product</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07160f;
+    --surface: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+    --text: #f4f7ea;
+    --muted: #a3b8a9;
+    --border: rgba(236,248,137,0.14);
+    --accent: #ecf889;
+    --accent-contrast: #0a2013;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --shadow: 0 1px 0 rgba(236,248,137,0.05) inset, 0 16px 34px -18px rgba(0,0,0,0.6);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100%; }
+  body {
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(236,248,137,0.06), transparent 60%),
+      radial-gradient(ellipse 800px 600px at 100% 100%, rgba(16,91,47,0.35), transparent 60%),
+      linear-gradient(160deg, #0f2c1c 0%, var(--bg) 55%, #051007 100%);
+    color: var(--text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  .stage { width: 100%; max-width: 640px; animation: fadeUp 0.7s var(--ease) both; padding-top: 24px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600;
+    color: var(--muted); text-decoration: none; cursor: pointer; border: 1px solid transparent;
+    background: none; padding: 6px 10px; margin-bottom: 18px; border-radius: 999px;
+    transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .back:hover { background: rgba(236,248,137,0.06); color: var(--accent); border-color: var(--border); }
+  .back svg { width: 14px; height: 14px; }
+  h1 { font-family: "Fraunces", serif; font-style: italic; font-weight: 600; font-size: 30px; letter-spacing: -0.01em; margin: 0 0 6px; text-align: center; }
+  p.sub { margin: 0 0 32px; text-align: center; color: var(--muted); font-size: 14px; }
+  .card {
+    position: relative; background: var(--surface); backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow);
+    animation: rise 0.6s var(--ease) 0.05s both; overflow: hidden;
+    transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  }
+  .card::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(480px circle at var(--x, 50%) var(--y, 0%), rgba(236,248,137,0.07), transparent 55%);
+    opacity: 0; transition: opacity 0.4s var(--ease); pointer-events: none;
+  }
+  .card:hover { border-color: rgba(236,248,137,0.28); box-shadow: var(--shadow), 0 0 0 1px rgba(236,248,137,0.15); }
+  .card:hover::before { opacity: 1; }
+  .card > * { position: relative; z-index: 1; }
+  form { display: flex; flex-direction: column; gap: 18px; }
+  .lookup-row { display: flex; gap: 10px; align-items: flex-end; }
+  .lookup-row .field { flex: 1; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 13px; font-weight: 600; color: var(--text); }
+  input, textarea {
+    font-family: inherit; font-size: 14px; padding: 12px 14px;
+    border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03); color: var(--text); outline: none;
+    transition: border-color 0.25s var(--ease), background 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  }
+  input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.7; }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+  input:focus, textarea:focus {
+    border-color: var(--accent); background: rgba(236,248,137,0.05);
+    box-shadow: 0 0 0 3px rgba(236,248,137,0.12);
+  }
+  fieldset { border: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 18px; transition: opacity 0.35s var(--ease); }
+  fieldset[disabled] { opacity: 0.45; }
+  .price-wrap { position: relative; }
+  .price-wrap span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
+  .price-wrap input { padding-left: 26px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: inherit; font-size: 14px; font-weight: 600; padding: 13px 20px;
+    border-radius: 999px; border: 1px solid transparent; cursor: pointer;
+    transition: transform 0.3s var(--ease), opacity 0.25s var(--ease), background 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--accent); color: var(--accent-contrast); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -8px rgba(236,248,137,0.45); opacity: 1; }
+  .btn:focus-visible, .back:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .message { margin-top: 18px; padding: 12px 14px; border-radius: var(--radius-sm); background: rgba(236,248,137,0.08); border: 1px solid rgba(236,248,137,0.18); color: var(--text); font-size: 13px; font-weight: 600; }
+  .message.error { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.28); color: #fca5a5; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .success-overlay {
+    position: fixed; inset: 0; background: rgba(5, 16, 10, 0.68);
+    backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+    display: flex; align-items: center; justify-content: center; z-index: 1000;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s var(--ease);
+  }
+  .success-overlay.show { opacity: 1; pointer-events: auto; }
+  .success-panel {
+    position: relative; background: #0c2317; border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow), 0 0 0 1px rgba(236,248,137,0.1);
+    padding: 40px 48px; display: flex; flex-direction: column; align-items: center; gap: 16px;
+    transform: scale(0.6) translateY(10px); opacity: 0;
+    transition: transform 0.1s linear, opacity 0.1s linear;
+  }
+  .success-overlay.show .success-panel { animation: panelPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+  @keyframes panelPop { 0% { transform: scale(0.6) translateY(10px); opacity: 0; } 60% { transform: scale(1.04) translateY(0); opacity: 1; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+  .success-icon-wrap { position: relative; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; }
+  .success-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--accent); opacity: 0; }
+  .success-overlay.show .success-ring { animation: ringPulse 0.9s var(--ease) 0.25s forwards; }
+  @keyframes ringPulse { 0% { transform: scale(0.7); opacity: 0.6; } 100% { transform: scale(1.7); opacity: 0; } }
+  .success-check { width: 64px; height: 64px; position: relative; z-index: 1; }
+  .success-check circle { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 166; stroke-dashoffset: 166; transform-origin: center; }
+  .success-overlay.show .success-check circle { animation: circleDraw 0.45s var(--ease) 0.1s forwards; }
+  .success-check path { fill: none; stroke: var(--accent); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 48; stroke-dashoffset: 48; }
+  .success-overlay.show .success-check path { animation: checkDraw 0.3s var(--ease) 0.5s forwards, checkPop 0.3s var(--ease) 0.78s; }
+  @keyframes circleDraw { to { stroke-dashoffset: 0; } }
+  @keyframes checkDraw { to { stroke-dashoffset: 0; } }
+  @keyframes checkPop { 0% { transform: scale(1); } 50% { transform: scale(1.18); } 100% { transform: scale(1); } }
+  .confetti { position: absolute; top: 50%; left: 50%; width: 7px; height: 7px; border-radius: 2px; opacity: 0; }
+  .success-overlay.show .confetti { animation: confettiBurst 0.7s var(--ease) 0.42s forwards; }
+  .confetti:nth-child(1) { background: var(--accent); --tx: -46px; --ty: -34px; --rot: -50deg; }
+  .confetti:nth-child(2) { background: #f2b705; --tx: 44px; --ty: -30px; --rot: 40deg; }
+  .confetti:nth-child(3) { background: #6ee7b7; --tx: -50px; --ty: 18px; --rot: 30deg; }
+  .confetti:nth-child(4) { background: #e0592a; --tx: 50px; --ty: 22px; --rot: -35deg; }
+  .confetti:nth-child(5) { background: #a855f7; --tx: -14px; --ty: -50px; --rot: 15deg; }
+  .confetti:nth-child(6) { background: #ec4899; --tx: 14px; --ty: -50px; --rot: -15deg; }
+  @keyframes confettiBurst { 0% { transform: translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(0.4); opacity: 0; } 25% { opacity: 1; } 100% { transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1); opacity: 0; } }
+  .success-text { font-size: 15px; font-weight: 700; color: var(--text); opacity: 0; transform: translateY(6px); }
+  .success-overlay.show .success-text { animation: textRise 0.4s var(--ease) 0.55s forwards; }
+  @keyframes textRise { to { opacity: 1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; } }
+  @media (max-width: 560px) { h1 { font-size: 22px; } .card { padding: 22px; } }
+</style>
+</head>
+<body>
+  <main class="stage">
+    <a class="back" href="product-management.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Back
+    </a>
+
+    <h1>Update Product</h1>
+    <p class="sub">Edit the details below and save your changes.</p>
+
+    <div class="card">
+      <form onsubmit="return false;">
+        <div class="lookup-row">
+          <div class="field">
+            <label for="id">Product ID</label>
+            <input type="number" id="id" placeholder="eg: 101"/>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="getProduct()">Find product</button>
+        </div>
+
+        <div id="lookupMessageArea"></div>
+
+        <fieldset id="detailsFieldset" disabled>
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" placeholder="eg: Mouse"/>
+          </div>
+
+          <div class="field">
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="eg: A small description about the product"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="price">Price</label>
+            <div class="price-wrap">
+              <span>$</span>
+              <input type="number" id="price" placeholder="eg: 000" step="0.01" />
+            </div>
+          </div>
+
+          <!-- STOCK FIELD -->
+          <div class="field">
+            <label for="stock">Stock</label>
+            <input type="number" id="stock" placeholder="eg: 50" min="0" step="1" />
+          </div>
+
+          <!-- CATEGORY FIELD ADDED -->
+          <div class="field">
+            <label for="category">Category</label>
+            <input type="text" id="category" placeholder="eg: Electronics" />
+          </div>
+
+          <div class="field">
+            <label for="photoUrl">Photo URL</label>
+            <input type="text" id="photoUrl" placeholder="https://example.com/image.jpg"/>
+          </div>
+
+          <button type="button" class="btn btn-primary" onclick="updateProduct()">Update Product</button>
+        </fieldset>
+      </form>
+
+      <div id="messageArea"></div>
+    </div>
+  </main>
+
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-panel">
+      <div class="success-icon-wrap">
+        <div class="success-ring"></div>
+        <span class="confetti"></span>
+        <span class="confetti"></span>
+        <span class="confetti"></span>
+        <span class="confetti"></span>
+        <span class="confetti"></span>
+        <span class="confetti"></span>
+        <svg class="success-check" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="26" />
+          <path d="M20 33 L28 41 L45 24" />
+        </svg>
+      </div>
+      <div class="success-text">Product updated!</div>
+    </div>
+  </div>
+
+  <script>
+    // ─── Auth Guard ─────────────────────────
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    if (!token || role !== 'ADMIN') {
+      window.location.replace('/login.html');
+    }
+
+    function getAuthHeaders() {
+      return {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      };
+    }
+
+    async function getProduct() {
+      const idValue = document.getElementById("id").value;
+      const lookupMessageArea = document.getElementById("lookupMessageArea");
+      const detailsFieldset = document.getElementById("detailsFieldset");
+
+      lookupMessageArea.innerHTML = "";
+      document.getElementById("messageArea").innerHTML = "";
+
+      const id = parseInt(idValue);
+      if (isNaN(id) || id <= 0) {
+        lookupMessageArea.innerHTML = `<div class="message error">Please enter a valid product ID.</div>`;
+        detailsFieldset.disabled = true;
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/viewProduct/${id}`, {
+          method: "GET",
+          headers: getAuthHeaders()
+        });
+
+        if (!response.ok) {
+          lookupMessageArea.innerHTML = `<div class="message error">No product found with that ID. (Status: ${response.status})</div>`;
+          detailsFieldset.disabled = true;
+          return;
+        }
+
+        const product = await response.json();
+        if (!product || !product.name) {
+          lookupMessageArea.innerHTML = `<div class="message error">No product found with that ID.</div>`;
+          detailsFieldset.disabled = true;
+          return;
+        }
+
+        document.getElementById("name").value = product.name;
+        document.getElementById("description").value = product.description || "";
+        document.getElementById("price").value = product.price;
+        document.getElementById("stock").value = product.stock;
+        document.getElementById("category").value = product.category || "";   // POPULATE CATEGORY
+        document.getElementById("photoUrl").value = product.imageUrl || "";
+
+        detailsFieldset.disabled = false;
+        lookupMessageArea.innerHTML = `<div class="message">Product ${id} loaded.</div>`;
+
+      } catch (err) {
+        lookupMessageArea.innerHTML = `<div class="message error">Server error. Check console.</div>`;
+        console.error(err);
+      }
+    }
+
+    async function updateProduct() {
+      const messageArea = document.getElementById("messageArea");
+      messageArea.innerHTML = "";
+
+      const id = parseInt(document.getElementById("id").value);
+      if (isNaN(id) || id <= 0) {
+        messageArea.innerHTML = `<div class="message error">Invalid product ID.</div>`;
+        return;
+      }
+
+      const product = {
+        name: document.getElementById("name").value,
+        description: document.getElementById("description").value,
+        price: parseFloat(document.getElementById("price").value),
+        stock: parseInt(document.getElementById("stock").value),
+        category: document.getElementById("category").value,     // INCLUDE CATEGORY
+        imageUrl: document.getElementById("photoUrl").value
+      };
+
+      // Validation
+      if (!product.name || !product.category || isNaN(product.price) || isNaN(product.stock)) {
+        messageArea.innerHTML = `<div class="message error">Please fill in Name, Price, Stock, and Category.</div>`;
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/updateProduct/${id}`, {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(product)
+        });
+
+        const result = await response.text();
+
+        if (!response.ok) {
+          messageArea.innerHTML = `<div class="message error">${result || "Failed to update product."}</div>`;
+          return;
+        }
+
+        showSuccessAndReset();
+
+      } catch (err) {
+        console.error("Network error:", err);
+        messageArea.innerHTML = `<div class="message error">Could not reach the server.</div>`;
+      }
+    }
+
+    function showSuccessAndReset() {
+      const overlay = document.getElementById("successOverlay");
+      overlay.classList.add("show");
+      setTimeout(() => {
+        overlay.classList.remove("show");
+        resetForm();
+      }, 1700);
+    }
+
+    function resetForm() {
+      document.getElementById("id").value = "";
+      document.getElementById("name").value = "";
+      document.getElementById("description").value = "";
+      document.getElementById("price").value = "";
+      document.getElementById("stock").value = "";
+      document.getElementById("category").value = "";
+      document.getElementById("photoUrl").value = "";
+      document.getElementById("detailsFieldset").disabled = true;
+      document.getElementById("lookupMessageArea").innerHTML = "";
+      document.getElementById("messageArea").innerHTML = "";
+      document.getElementById("id").focus();
+    }
+  </script>
+
+  <script>
+    document.querySelectorAll('.card').forEach(function (card) {
+      card.addEventListener('mousemove', function (e) {
+        var rect = card.getBoundingClientRect();
+        card.style.setProperty('--x', (e.clientX - rect.left) + 'px');
+        card.style.setProperty('--y', (e.clientY - rect.top) + 'px');
+      });
+    });
+  </script>
+</body>
+</html>

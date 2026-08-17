@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales-Savvy — Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --cream: #F9FBE7;
+        --white: #FFFFFF;
+        --green-dark: #1B4D3E;
+        --green-primary: #2D5016;
+        --green-accent: #7CB342;
+        --green-light: #E8F5A0;
+        --orange: #E65100;
+        --orange-soft: #F57F17;
+        --red: #C62828;
+        --purple: #6A1B9A;
+        --text-dark: #1A1A1A;
+        --text-muted: #5C5C5C;
+        --border: #E0E0E0;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-dark); min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+
+    .topbar { background: var(--green-dark); color: var(--white); padding: 10px 0; font-size: 13px; text-align: center; }
+    .topbar span { color: var(--green-light); font-weight: 600; }
+
+    header { background: var(--white); border-bottom: 1px solid var(--border); }
+    .header-inner { max-width: 1100px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; gap: 16px; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { width: 40px; height: 40px; background: var(--green-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--green-dark); }
+    .logo-text { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--green-dark); }
+    .logo-text span { font-weight: 600; opacity: 0.75; }
+
+    .back-link {
+        margin-left: auto;
+        display: flex; align-items: center; gap: 8px;
+        font-size: 14px; font-weight: 600; color: var(--green-primary);
+        padding: 10px 18px; border: 2px solid var(--border); border-radius: 30px;
+        transition: all 0.25s ease;
+    }
+    .back-link:hover { border-color: var(--green-accent); background: var(--green-light); }
+
+    .wrap { max-width: 1100px; margin: 36px auto 60px; padding: 0 32px; display: grid; grid-template-columns: 320px 1fr; gap: 28px; align-items: start; }
+
+    .card { background: var(--white); border: 1px solid var(--border); border-radius: 20px; padding: 30px; }
+
+    .profile-card { text-align: center; position: relative; overflow: hidden; }
+    .profile-card::before {
+        content: ''; position: absolute; top: -60%; right: -30%; width: 100%; height: 100%;
+        background: radial-gradient(circle, rgba(124,179,66,0.15) 0%, transparent 70%);
+    }
+    .big-avatar {
+        width: 96px; height: 96px; border-radius: 50%; background: var(--purple); color: var(--white);
+        display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700;
+        margin: 0 auto 16px; position: relative; z-index: 2;
+    }
+    .profile-card h2 { font-family: 'Playfair Display', serif; font-size: 22px; position: relative; z-index: 2; }
+    .profile-card .member-since { font-size: 13px; color: var(--text-muted); margin-top: 4px; position: relative; z-index: 2; }
+    .tier-badge {
+        display: inline-block; margin-top: 14px; background: var(--green-light); color: var(--green-dark);
+        font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 30px; position: relative; z-index: 2;
+    }
+
+    .stat-row { display: flex; justify-content: space-around; margin-top: 24px; position: relative; z-index: 2; }
+    .stat-row div { text-align: center; }
+    .stat-row strong { display: block; font-size: 20px; font-family: 'Playfair Display', serif; color: var(--text-dark); }
+    .stat-row span { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+
+    .edit-btn {
+        margin-top: 24px; width: 100%; padding: 13px; border-radius: 12px; border: none;
+        background: var(--green-primary); color: var(--white); font-weight: 700; font-size: 14px; cursor: pointer;
+        transition: all 0.25s ease; position: relative; z-index: 2;
+    }
+    .edit-btn:hover { background: var(--green-dark); }
+
+    .section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--green-accent); margin-bottom: 6px; }
+    .card h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 18px; }
+
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 8px; }
+    .detail-item label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); margin-bottom: 4px; }
+    .detail-item p { font-size: 14.5px; font-weight: 500; }
+
+    .divider-line { height: 1px; background: var(--border); margin: 24px 0; }
+
+    .address-box { background: var(--cream); border-radius: 14px; padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .address-box p { font-size: 13.5px; line-height: 1.5; }
+    .address-box strong { display: block; margin-bottom: 4px; font-size: 14px; }
+    .small-link { font-size: 12.5px; font-weight: 700; color: var(--green-primary); }
+
+    .order-row {
+        display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border);
+    }
+    .order-row:last-child { border-bottom: none; }
+    .order-icon {
+        width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center; color: var(--white);
+    }
+    .order-info { flex: 1; }
+    .order-info strong { font-size: 14px; display: block; }
+    .order-info span { font-size: 12px; color: var(--text-muted); }
+    .order-status {
+        font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 30px; text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .status-delivered { background: var(--green-light); color: var(--green-dark); }
+    .status-transit { background: #FFF3CD; color: var(--orange); }
+    .order-total { font-weight: 700; font-size: 14px; min-width: 60px; text-align: right; }
+
+    @media (max-width: 800px) {
+        .wrap { grid-template-columns: 1fr; }
+        .detail-grid { grid-template-columns: 1fr; }
+        .header-inner { padding: 14px 18px; flex-wrap: wrap; }
+    }
+</style>
+</head>
+<body>
+
+<div class="topbar">Free shipping on orders over $50 &nbsp;•&nbsp; <span>Sales-Savvy</span> — Flavours you'll love</div>
+
+<header>
+    <div class="header-inner">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12,2 C7,2 4,6 4,10 C4,16 12,22 12,22 C12,22 20,16 20,10 C20,6 17,2 12,2 Z"/>
+                    <path d="M12,6 L12,14" stroke-linecap="round"/>
+                    <circle cx="12" cy="10" r="2" fill="currentColor" stroke="none"/>
+                </svg>
+            </div>
+            <div class="logo-text">Sales-<span>Savvy</span></div>
+        </div>
+        <a href="index.html" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back to Shop
+        </a>
+    </div>
+</header>
+
+<div class="wrap">
+    <!-- Left: Profile summary -->
+    <div class="card profile-card">
+        <div class="big-avatar">JD</div>
+        <h2>Jordan Diaz</h2>
+        <p class="member-since">Member since Feb 2024</p>
+        <div class="tier-badge">🌿 Gold Member</div>
+        <div class="stat-row">
+            <div><strong>18</strong><span>Orders</span></div>
+            <div><strong>4.9</strong><span>Avg Rating</span></div>
+            <div><strong>320</strong><span>Points</span></div>
+        </div>
+        <button class="edit-btn">Edit Profile</button>
+    </div>
+
+    <!-- Right: Details -->
+    <div style="display:flex; flex-direction:column; gap:24px;">
+        <div class="card">
+            <div class="section-label">Account</div>
+            <h3>Personal Details</h3>
+            <div class="detail-grid">
+                <div class="detail-item"><label>Full Name</label><p>Jordan Diaz</p></div>
+                <div class="detail-item"><label>Email</label><p>jordan.diaz@email.com</p></div>
+                <div class="detail-item"><label>Phone</label><p>+1 (555) 213-9042</p></div>
+                <div class="detail-item"><label>Date of Birth</label><p>March 14, 1994</p></div>
+            </div>
+            <div class="divider-line"></div>
+            <div class="section-label">Shipping Address</div>
+            <div class="address-box">
+                <p><strong>Home</strong>221 Maple Grove Lane, Apt 4B<br>Austin, TX 78701, United States</p>
+                <a href="#" class="small-link">Edit</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-label">History</div>
+            <h3>Recent Orders</h3>
+
+            <div class="order-row">
+                <div class="order-icon" style="background:var(--green-dark)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><path d="M8 3h8v3.2c1.6.6 2.5 2.1 2.5 4.3v9a2 2 0 0 1-2 2H7.5a2 2 0 0 1-2-2v-9c0-2.2.9-3.7 2.5-4.3V3z"/></svg>
+                </div>
+                <div class="order-info"><strong>Order #SS-10432</strong><span>Single-Origin Coffee, Wildflower Honey · Jul 28, 2026</span></div>
+                <div class="order-status status-delivered">Delivered</div>
+                <div class="order-total">$30.50</div>
+            </div>
+
+            <div class="order-row">
+                <div class="order-icon" style="background:var(--orange-soft)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><path d="M8 3h8v3.2c1.6.6 2.5 2.1 2.5 4.3v9a2 2 0 0 1-2 2H7.5a2 2 0 0 1-2-2v-9c0-2.2.9-3.7 2.5-4.3V3z"/></svg>
+                </div>
+                <div class="order-info"><strong>Order #SS-10401</strong><span>Smoked Paprika Blend, Dark Chocolate 85% · Jul 15, 2026</span></div>
+                <div class="order-status status-transit">In Transit</div>
+                <div class="order-total">$17.75</div>
+            </div>
+
+            <div class="order-row">
+                <div class="order-icon" style="background:var(--purple)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><path d="M8 3h8v3.2c1.6.6 2.5 2.1 2.5 4.3v9a2 2 0 0 1-2 2H7.5a2 2 0 0 1-2-2v-9c0-2.2.9-3.7 2.5-4.3V3z"/></svg>
+                </div>
+                <div class="order-info"><strong>Order #SS-10388</strong><span>Loose Leaf Earl Grey, Sourdough Starter Kit · Jun 30, 2026</span></div>
+                <div class="order-status status-delivered">Delivered</div>
+                <div class="order-total">$30.00</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
