@@ -16,7 +16,8 @@ import java.util.Map;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired private UserRepository userRepository;
+    @Autowired 
+    private UserRepository userRepository;
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUserProfile() {
