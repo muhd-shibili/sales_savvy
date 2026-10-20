@@ -33,10 +33,9 @@
             font-family: 'DM Sans', sans-serif;
             background-color: var(--cream);
             min-height: 100vh;
+            min-height: 100dvh; /* correct height on mobile browsers with collapsing address bars */
             display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            overflow-x: clip; /* clips sideways overflow without making body its own scroll container */
             position: relative;
             cursor: default;
         }
@@ -113,6 +112,7 @@
             z-index: 10;
             width: 100%;
             max-width: 1100px;
+            margin: auto; /* centers when there is room, lets the page scroll when there isn't */
             padding: 20px;
             display: flex;
             gap: 0;
